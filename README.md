@@ -9,7 +9,7 @@ A REST service to find about dog name preferences
  - Refactor AssociationRules into own file
  - Use goroutines
 3. Refactor App and Comment
- - Directly typed URLS and DB names..
+ - Hard coded URLS and DB names..
 4. Allow multiple association items
 5. Decouple REST API from Webservice
  - Web Interface?
