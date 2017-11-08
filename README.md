@@ -8,7 +8,10 @@ A REST service to find about dog name preferences
  - Randomly generate transaction DB
  - Refactor AssociationRules into own file
  - Use goroutines
-3. Refactor App and Comment
+3. Refactor App into Packages and Comment
+ - Decouple Nameserver from rest, Server as lib?
+    - Start Server own App
+    - Fill DB own app
  - Hard coded URLS and DB names..
 4. Allow multiple association items
 5. Decouple REST API from Webservice
