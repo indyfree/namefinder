@@ -1,4 +1,4 @@
-package namefinder
+package main
 
 import (
 	"log"

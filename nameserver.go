@@ -1,4 +1,4 @@
-package namefinder
+package main
 
 import (
 	"fmt"
@@ -62,7 +62,7 @@ func getRules(itemset string) []AssociationRule {
 	return results
 }
 
-func StartUp() {
+func main() {
 	router := mux.NewRouter().StrictSlash(true)
 	router.HandleFunc("/", Index)
 	router.HandleFunc("/rules", RulesIndex)
