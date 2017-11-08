@@ -16,7 +16,7 @@ func Index(w http.ResponseWriter, r *http.Request) {
 func RulesIndex(w http.ResponseWriter, r *http.Request) {
 	rules := GetRules("")
 	for _, rule := range rules {
-		fmt.Fprintf(w, "%s => %s, sup: %d, conf: %f, lift: %f\n", rule.A, rule.B, rule.Support, rule.Confidence, rule.Lift)
+		fmt.Fprintf(w, "%s\n", rule)
 	}
 	fmt.Printf("Request at %s at %s\n", r.URL, time.Now().Format("2006-01-02 15:04:05"))
 }
@@ -26,7 +26,7 @@ func RulesShow(w http.ResponseWriter, r *http.Request) {
 	rules := GetRules(vars["name"])
 	if len(rules) > 0 { // Better to return & check nil?
 		for _, rule := range rules {
-			fmt.Fprintf(w, "%s => %s, sup: %d, conf: %f, lift: %f\n", rule.A, rule.B, rule.Support, rule.Confidence, rule.Lift)
+			fmt.Fprintf(w, "%s\n", rule)
 		}
 	} else {
 		fmt.Fprintf(w, "No rule found for %s :(", vars["name"])
