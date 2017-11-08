@@ -33,6 +33,8 @@ func getRules(itemset string) []AssociationRule {
 	}
 	defer session.Close()
 
+	session.SetMode(mgo.Monotonic, true)
+
 	c := session.DB("namefinder").C("rules")
 
 	results := make([]AssociationRule, 1)
