@@ -1,0 +1,22 @@
+---
+ apiVersion: extensions/v1beta1
+ kind: Deployment
+ metadata:
+   name: namefinder
+ spec:
+   replicas: 1
+   template:
+     metadata:
+       labels:
+         app: namefinders
+     spec:
+       containers:
+         - name: nameserver
+           image: indyfree/nameserver:latest
+           imagePullPolicy: Always
+           ports:
+             - containerPort: 8080
+         - name: namedb
+           image: mongo
+           ports:
+             - containerPort: 27017
