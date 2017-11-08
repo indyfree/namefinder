@@ -8,7 +8,7 @@
    template:
      metadata:
        labels:
-         app: namefinders
+         app: namefinder
      spec:
        containers:
          - name: nameserver
