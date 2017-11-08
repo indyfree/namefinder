@@ -6,16 +6,6 @@ import (
 	mgo "gopkg.in/mgo.v2"
 )
 
-// Association Rule in the form {A => B}, where A and B can be itemsets
-// Why public attributes? (Capitals)
-type AssociationRule struct {
-	A          []string
-	B          []string
-	Support    int
-	Confidence float64
-	Lift       float64
-}
-
 func InsertSampleData() {
 	session, err := mgo.Dial("127.0.0.1:27017")
 	if err != nil {
