@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 	"time"
 
 	"gopkg.in/mgo.v2"
@@ -13,7 +14,7 @@ import (
 func Index(w http.ResponseWriter, r *http.Request) {
 	name := r.URL.Path[1:]
 	if len(name) > 0 {
-		rules := getRules(name)
+		rules := getRules(strings.ToLower(name))
 		likes := make([][]string, len(rules))
 		for i, rule := range rules {
 			likes[i] = rule.B
@@ -22,7 +23,7 @@ func Index(w http.ResponseWriter, r *http.Request) {
 	} else {
 		fmt.Fprint(w, getRules(""))
 	}
-	fmt.Println("Request at:", time.Now().Format("2006-01-02 15:04:05"))
+	fmt.Printf("Requested %s at %s", name, time.Now().Format("2006-01-02 15:04:05"))
 }
 
 func getRules(itemset string) []AssociationRule {
