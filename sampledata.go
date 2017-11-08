@@ -26,11 +26,13 @@ func InsertSampleData() {
 	c := session.DB("namefinder").C("rules")
 
 	rules := []AssociationRule{
-		{[]string{"Bailey"}, []string{"Max", "Charlie"}, 10, 0.8, 0.3},
-		{[]string{"Max"}, []string{"Buddy", "Rocky"}, 8, 0.6, 0.8},
-		{[]string{"Jack"}, []string{"Toby"}, 5, 0.5, 0.3},
-		{[]string{"Jacky"}, []string{"Toby", "Rocky"}, 7, 0.8, 0.5},
-		{[]string{"Buddy"}, []string{"Max", "Bailey"}, 15, 0.5, 0.2},
+		{[]string{"bailey"}, []string{"max", "charlie"}, 10, 0.8, 0.3},
+		{[]string{"bailey"}, []string{"rocky"}, 10, 0.5, 0.3},
+		{[]string{"max"}, []string{"buddy", "rocky"}, 8, 0.6, 0.8},
+		{[]string{"max"}, []string{"bailey"}, 4, 0.6, 0.8},
+		{[]string{"jack"}, []string{"toby"}, 5, 0.5, 0.3},
+		{[]string{"jacky"}, []string{"toby", "rocky"}, 7, 0.8, 0.5},
+		{[]string{"buddy"}, []string{"max", "bailey"}, 15, 0.5, 0.2},
 	}
 
 	for _, rule := range rules {
@@ -39,13 +41,4 @@ func InsertSampleData() {
 			log.Println(err)
 		}
 	}
-
-	index := mgo.Index{
-		Key:        []string{"a"},
-		Unique:     true,
-		DropDups:   true,
-		Background: true, // See notes.
-		Sparse:     true,
-	}
-	err = c.EnsureIndex(index)
 }
