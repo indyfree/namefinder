@@ -23,18 +23,20 @@ func Index(w http.ResponseWriter, r *http.Request) {
 
 func RulesIndex(w http.ResponseWriter, r *http.Request) {
 	rules := GetRules("")
-	for _, rule := range rules {
-		fmt.Fprintf(w, "%s\n", rule)
+	if rules != nil {
+		json.NewEncoder(w).Encode(rules)
 	}
 }
 
 func RulesShow(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	rules := GetRules(vars["name"])
-	if len(rules) > 0 { // Better to return & check nil?
+	rules := GetRules(vars["item"])
+	if rules != nil { // Better to return & check nil?
 		json.NewEncoder(w).Encode(rules)
 	} else {
-		fmt.Fprintf(w, "No rule found for %s :(", vars["name"])
+		// return empty array to conform json
+		// TODO one layer below in GetRules?
+		json.NewEncoder(w).Encode(AssociationRules{})
 	}
 }
 
@@ -42,6 +44,6 @@ func NewRouter() *mux.Router {
 	router := mux.NewRouter().StrictSlash(true)
 	router.HandleFunc("/", LogHandler(Index))
 	router.HandleFunc("/rules", LogHandler(RulesIndex))
-	router.HandleFunc("/rules/{name}", LogHandler(RulesShow))
+	router.HandleFunc("/rules/{item}", LogHandler(RulesShow))
 	return router
 }
