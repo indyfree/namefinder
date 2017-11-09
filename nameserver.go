@@ -7,26 +7,43 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
-func GetRules(itemset string) AssociationRules {
-	session, err := mgo.Dial("127.0.0.1:27017")
+const address string = "127.0.0.1:27017"
+const dbname string = "namefinder"
+const collection string = "rules"
+
+func OpenMongoSession(adress string) *mgo.Session {
+	session, err := mgo.Dial(address)
 	if err != nil {
 		panic(err)
 	}
-	defer session.Close()
-
 	session.SetMode(mgo.Monotonic, true)
+	return session
+}
 
-	c := session.DB("namefinder").C("rules")
+func GetRules(itemset string) AssociationRules {
+	s := OpenMongoSession(address)
+	defer s.Close()
+	c := s.DB(dbname).C(collection)
 
 	var results AssociationRules
 	query := bson.M{"a": itemset}
 
-	// TODO query = nil return all rules
-	if itemset == "" {
-		query = nil
+	err := c.Find(query).All(&results)
+	if err != nil {
+		log.Fatal(err)
 	}
 
-	err = c.Find(query).All(&results)
+	return results
+}
+
+func GetAllRules() AssociationRules {
+	s := OpenMongoSession(address)
+	defer s.Close()
+	c := s.DB(dbname).C(collection)
+
+	var results AssociationRules
+
+	err := c.Find(nil).All(&results)
 	if err != nil {
 		log.Fatal(err)
 	}

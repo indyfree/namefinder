@@ -22,10 +22,8 @@ func Index(w http.ResponseWriter, r *http.Request) {
 }
 
 func RulesIndex(w http.ResponseWriter, r *http.Request) {
-	rules := GetRules("")
-	if rules != nil {
-		json.NewEncoder(w).Encode(rules)
-	}
+	rules := GetAllRules()
+	json.NewEncoder(w).Encode(rules)
 }
 
 func RulesShow(w http.ResponseWriter, r *http.Request) {
