@@ -29,13 +29,7 @@ func RulesIndex(w http.ResponseWriter, r *http.Request) {
 func RulesShow(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	rules := GetRules(vars["item"])
-	if rules != nil { // Better to return & check nil?
-		json.NewEncoder(w).Encode(rules)
-	} else {
-		// return empty array to conform json
-		// TODO one layer below in GetRules?
-		json.NewEncoder(w).Encode(AssociationRules{})
-	}
+	json.NewEncoder(w).Encode(rules)
 }
 
 func NewRouter() *mux.Router {

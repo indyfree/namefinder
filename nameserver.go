@@ -25,10 +25,8 @@ func GetRules(itemset string) AssociationRules {
 	defer s.Close()
 	c := s.DB(dbname).C(collection)
 
-	var results AssociationRules
-	query := bson.M{"a": itemset}
-
-	err := c.Find(query).All(&results)
+	results := AssociationRules{}
+	err := c.Find(bson.M{"a": itemset}).All(&results)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -41,8 +39,7 @@ func GetAllRules() AssociationRules {
 	defer s.Close()
 	c := s.DB(dbname).C(collection)
 
-	var results AssociationRules
-
+	results := AssociationRules{}
 	err := c.Find(nil).All(&results)
 	if err != nil {
 		log.Fatal(err)
