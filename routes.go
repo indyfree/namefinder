@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"time"
@@ -25,9 +26,7 @@ func RulesShow(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	rules := GetRules(vars["name"])
 	if len(rules) > 0 { // Better to return & check nil?
-		for _, rule := range rules {
-			fmt.Fprintf(w, "%s\n", rule)
-		}
+		json.NewEncoder(w).Encode(rules)
 	} else {
 		fmt.Fprintf(w, "No rule found for %s :(", vars["name"])
 	}
