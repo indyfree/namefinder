@@ -9,9 +9,16 @@ import (
 	"github.com/gorilla/mux"
 )
 
+// Function adapter to handle the logging
+func LogHandler(f func(w http.ResponseWriter, r *http.Request)) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		f(w, r)
+		fmt.Printf("Request at %s at %s\n", r.URL, time.Now().Format("2006-01-02 15:04:05"))
+	}
+}
+
 func Index(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Welcome to the namefinder service")
-	fmt.Printf("Request at %s at %s\n", r.URL, time.Now().Format("2006-01-02 15:04:05"))
 }
 
 func RulesIndex(w http.ResponseWriter, r *http.Request) {
@@ -19,7 +26,6 @@ func RulesIndex(w http.ResponseWriter, r *http.Request) {
 	for _, rule := range rules {
 		fmt.Fprintf(w, "%s\n", rule)
 	}
-	fmt.Printf("Request at %s at %s\n", r.URL, time.Now().Format("2006-01-02 15:04:05"))
 }
 
 func RulesShow(w http.ResponseWriter, r *http.Request) {
@@ -30,13 +36,12 @@ func RulesShow(w http.ResponseWriter, r *http.Request) {
 	} else {
 		fmt.Fprintf(w, "No rule found for %s :(", vars["name"])
 	}
-	fmt.Printf("Request at %s at %s\n", r.URL, time.Now().Format("2006-01-02 15:04:05"))
 }
 
 func NewRouter() *mux.Router {
 	router := mux.NewRouter().StrictSlash(true)
-	router.HandleFunc("/", Index)
-	router.HandleFunc("/rules", RulesIndex)
-	router.HandleFunc("/rules/{name}", RulesShow)
+	router.HandleFunc("/", LogHandler(Index))
+	router.HandleFunc("/rules", LogHandler(RulesIndex))
+	router.HandleFunc("/rules/{name}", LogHandler(RulesShow))
 	return router
 }
