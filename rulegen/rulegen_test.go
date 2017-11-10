@@ -37,6 +37,12 @@ func TestFrequentItemSets(t *testing.T) {
 	}{
 		{[]Transaction{{"A", "B"}, {"B", "C"}, {"A", "D"}, {"D", "B"}},
 			[]string{"A", "B", "C", "D"}, 0.5, []Itemset{{"A"}, {"B"}, {"D"}}},
+		{[]Transaction{{"Hund", "Katze"}, {"Maus", "Kind"}, {"Vater", "Mutter"}, {"Mutter", "Kind"}, {"Kind", "Maus"}},
+			[]string{"Hund", "Katze", "Maus", "Kind", "Mutter"}, 0.6, []Itemset{{"Kind"}}},
+		{[]Transaction{},
+			[]string{"Hund", "Katze", "Maus", "Kind", "Mutter"}, 0.0, []Itemset{}},
+		{[]Transaction{{"Hund"}, {"Katze"}},
+			[]string{"Hund", "Katze", "Maus", "Kind", "Mutter"}, 1.0, []Itemset{}},
 	}
 	for _, c := range cases {
 		got := FrequentItemsets(c.t, c.items, c.minsup)
