@@ -1,6 +1,7 @@
 package rulegen
 
 import (
+	"fmt"
 	"testing"
 )
 
@@ -12,10 +13,23 @@ type testpair struct {
 	rules        AssociationRules
 }
 
-// var cases = []testpair{
-// 	{[][]string{{"A", "B"}, {"B", "C"}, {"A", "B", "C"}, {"A", "B"}}, 1.0, 0.5, 0.5,
-// 		ruleserver.AssociationRules{ruleserver.AssociationRule{[]string{"A"}, []string{"B"}, 1, 0.75, 0.75}}},
-// }
+var cases = []struct {
+	t      []Transaction
+	items  []string
+	minsup float64
+	want   []Itemset
+}{
+	{[]Transaction{{"A", "B"}, {"B", "C"}, {"A", "D"}, {"D", "B"}},
+		[]string{"A", "B", "C", "D"}, 0.0, []Itemset{{"A"}, {"B"}, {"C"}, {"D"}}},
+	{[]Transaction{{"A", "B"}, {"B", "C"}, {"A", "D"}, {"D", "B"}},
+		[]string{"A", "B", "C", "D"}, 0.5, []Itemset{{"A"}, {"B"}, {"D"}}},
+	{[]Transaction{{"Hund", "Katze"}, {"Maus", "Kind"}, {"Vater", "Mutter"}, {"Mutter", "Kind"}, {"Kind", "Maus"}},
+		[]string{"Hund", "Katze", "Maus", "Kind", "Mutter"}, 0.6, []Itemset{{"Kind"}}},
+	{[]Transaction{},
+		[]string{"Hund", "Katze", "Maus", "Kind", "Mutter"}, 0.0, []Itemset{}},
+	{[]Transaction{{"Hund"}, {"Katze"}},
+		[]string{"Hund", "Katze", "Maus", "Kind", "Mutter"}, 1.0, []Itemset{}},
+}
 
 func TestGenerateTransactions(t *testing.T) {
 	itemset := []string{"A", "B", "C", "D"}
@@ -29,27 +43,17 @@ func TestGenerateTransactions(t *testing.T) {
 }
 
 func TestFrequentItemSets(t *testing.T) {
-	cases := []struct {
-		t      []Transaction
-		items  []string
-		minsup float64
-		want   []Itemset
-	}{
-		{[]Transaction{{"A", "B"}, {"B", "C"}, {"A", "D"}, {"D", "B"}},
-			[]string{"A", "B", "C", "D"}, 0.5, []Itemset{{"A"}, {"B"}, {"D"}}},
-		{[]Transaction{{"Hund", "Katze"}, {"Maus", "Kind"}, {"Vater", "Mutter"}, {"Mutter", "Kind"}, {"Kind", "Maus"}},
-			[]string{"Hund", "Katze", "Maus", "Kind", "Mutter"}, 0.6, []Itemset{{"Kind"}}},
-		{[]Transaction{},
-			[]string{"Hund", "Katze", "Maus", "Kind", "Mutter"}, 0.0, []Itemset{}},
-		{[]Transaction{{"Hund"}, {"Katze"}},
-			[]string{"Hund", "Katze", "Maus", "Kind", "Mutter"}, 1.0, []Itemset{}},
-	}
 	for _, c := range cases {
 		got := FrequentItemsets(c.t, c.items, c.minsup)
 		if !equalSets(c.want, got) {
 			t.Errorf("FrequentItemSets() == %q, want %q", got, c.want)
 		}
 	}
+}
+
+func TestApriori(t *testing.T) {
+	c := cases[0]
+	fmt.Println(Apriori(c.t, c.items, c.minsup))
 }
 
 func equalSets(a []Itemset, b []Itemset) bool {

@@ -65,3 +65,24 @@ func FrequentItemsets(t []Transaction, items []string, minsup float64) []Itemset
 	}
 	return frequent
 }
+
+func Apriori(t []Transaction, items []string, minsup float64) []Itemset {
+	frequent1 := FrequentItemsets(t, items, minsup)
+	candidates1 := GenerateCandidates(frequent1)
+	//frequent2 := FrequentItemsets(t, candidates1, minsup)
+	//candidates2 := GenerateCandidates(frequent2)
+	return candidates1
+}
+
+// TODO Use Channels!
+func GenerateCandidates(itemsets []Itemset) []Itemset {
+	candidates := make([]Itemset, 0)
+
+	for i := 0; i < len(itemsets); i++ {
+		for j := i + 1; j < len(itemsets); j++ {
+			c := append(itemsets[i], itemsets[j]...)
+			candidates = append(candidates, c)
+		}
+	}
+	return candidates
+}
