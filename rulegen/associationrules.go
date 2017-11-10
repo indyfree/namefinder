@@ -1,4 +1,4 @@
-package ruleserver
+package rulegen
 
 import "fmt"
 

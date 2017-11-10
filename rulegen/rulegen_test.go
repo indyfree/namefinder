@@ -1,13 +1,12 @@
 package rulegen
 
 import "testing"
-import "github.com/indyfree/namefinder/ruleserver"
 
 type testpair struct {
 	transactions [][]string
 	min_sup      float64
 	min_conf     float64
-	rules        ruleserver.AssociationRules
+	rules        AssociationRules
 }
 
 // var cases = []testpair{

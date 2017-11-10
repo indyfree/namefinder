@@ -5,6 +5,8 @@ import (
 
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
+
+	rg "github.com/indyfree/namefinder/rulegen"
 )
 
 const address string = "127.0.0.1:27017"
@@ -20,12 +22,12 @@ func OpenMongoSession(adress string) *mgo.Session {
 	return session
 }
 
-func GetRules(itemset string) AssociationRules {
+func GetRules(itemset string) rg.AssociationRules {
 	s := OpenMongoSession(address)
 	defer s.Close()
 	c := s.DB(dbname).C(collection)
 
-	results := AssociationRules{}
+	results := rg.AssociationRules{}
 	err := c.Find(bson.M{"a": itemset}).All(&results)
 	if err != nil {
 		log.Fatal(err)
@@ -34,12 +36,12 @@ func GetRules(itemset string) AssociationRules {
 	return results
 }
 
-func GetAllRules() AssociationRules {
+func GetAllRules() rg.AssociationRules {
 	s := OpenMongoSession(address)
 	defer s.Close()
 	c := s.DB(dbname).C(collection)
 
-	results := AssociationRules{}
+	results := rg.AssociationRules{}
 	err := c.Find(nil).All(&results)
 	if err != nil {
 		log.Fatal(err)

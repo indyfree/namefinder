@@ -7,14 +7,14 @@ import (
 
 	mgo "gopkg.in/mgo.v2"
 
-	"github.com/indyfree/namefinder/rulegen"
-	"github.com/indyfree/namefinder/ruleserver"
+	rg "github.com/indyfree/namefinder/rulegen"
+	rs "github.com/indyfree/namefinder/ruleserver"
 )
 
 func main() {
-	t := rulegen.GenerateTransactions(20, []string{"A", "B", "C", "D", "E", "F", "G", "H"})
+	t := rg.GenerateTransactions(20, []string{"A", "B", "C", "D", "E", "F", "G", "H"})
 	fmt.Println(t)
-	router := ruleserver.NewRouter()
+	router := rs.NewRouter()
 	log.Fatal(http.ListenAndServe(":8080", router))
 
 }
@@ -28,7 +28,7 @@ func InsertSampleData() {
 
 	c := session.DB("namefinder").C("rules")
 
-	rules := []ruleserver.AssociationRule{
+	rules := []rg.AssociationRule{
 		{[]string{"bailey"}, []string{"max", "charlie"}, 0.8, 0.8, 0.3},
 		{[]string{"bailey"}, []string{"rocky"}, 0.5, 0.5, 0.3},
 		{[]string{"max"}, []string{"buddy", "rocky"}, 0.8, 0.6, 0.8},
