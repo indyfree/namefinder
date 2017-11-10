@@ -9,8 +9,8 @@ type Transactions [][]string
 type Itemset []string
 type Itemsets []Itemset
 
-// TODO refactor?
-func (a Itemset) isEqual(b Itemset) bool {
+// TODO refactor!
+func (a Itemset) Equals(b Itemset) bool {
 	if len(a) != len(b) {
 		return false
 	}
@@ -22,12 +22,12 @@ func (a Itemset) isEqual(b Itemset) bool {
 	return true
 }
 
-func (a Itemsets) isEqual(b Itemsets) bool {
+func (a Itemsets) Equals(b Itemsets) bool {
 	if len(a) != len(b) {
 		return false
 	}
 	for i := range a {
-		if !a[i].isEqual(b[i]) {
+		if !a[i].Equals(b[i]) {
 			return false
 		}
 	}
@@ -35,11 +35,11 @@ func (a Itemsets) isEqual(b Itemsets) bool {
 }
 
 // TODO use pointers?
-func GenerateTransactions(number int, items []string) Transactions {
+func GenerateTransactions(n int, items []string) Transactions {
 	r := rand.New(rand.NewSource(time.Now().Unix()))
 
-	transactions := make([][]string, number)
-	for i := 0; i < number; i++ {
+	transactions := make([][]string, n)
+	for i := 0; i < n; i++ {
 		tLength := r.Intn(len(items)-1) + 2
 		perm := r.Perm(len(items))
 

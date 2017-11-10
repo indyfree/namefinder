@@ -4,6 +4,7 @@ import (
 	"testing"
 )
 
+// TODO: Why here small attributes?
 type testpair struct {
 	transactions [][]string
 	min_sup      float64
@@ -16,7 +17,7 @@ type testpair struct {
 // 		ruleserver.AssociationRules{ruleserver.AssociationRule{[]string{"A"}, []string{"B"}, 1, 0.75, 0.75}}},
 // }
 
-func TestGenerateTransActions(t *testing.T) {
+func TestGenerateTransactions(t *testing.T) {
 	itemset := []string{"A", "B", "C", "D"}
 	tnumber := 100
 	transactions := GenerateTransactions(tnumber, itemset)
@@ -39,7 +40,7 @@ func TestFrequentItemSets(t *testing.T) {
 	}
 	for _, c := range cases {
 		got := FrequentItemsets(c.t, c.items, c.minsup)
-		if !c.want.isEqual(got) {
+		if !c.want.Equals(got) {
 			t.Errorf("FrequentItemSets() == %q, want %q", got, c.want)
 		}
 	}
