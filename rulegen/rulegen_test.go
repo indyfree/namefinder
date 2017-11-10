@@ -1,34 +1,46 @@
 package rulegen
 
 import (
-	"fmt"
 	"testing"
 )
 
-// TODO: Why here small attributes?
-type testpair struct {
-	transactions [][]string
-	min_sup      float64
-	min_conf     float64
-	rules        AssociationRules
-}
+func TestApriori(t *testing.T) {
+	cases := []struct {
+		t      []Transaction
+		items  []Itemset
+		minsup float64
+		want   []Itemset
+	}{
+		{t: []Transaction{{"A", "B"}, {"A", "D"}, {"B", "C"}, {"B", "D"}, {"A", "C", "D"},
+			{"A", "C", "E"}, {"A", "B", "E"}, {"A", "C", "D", "E"}},
+			items:  []Itemset{{"A"}, {"B"}, {"C"}, {"D"}, {"E"}},
+			minsup: 0.25,
+			want: []Itemset{{"A"}, {"B"}, {"C"}, {"D"}, {"E"}, {"A", "B"}, {"A", "C"},
+				{"A", "D"}, {"A", "E"}, {"C", "D"}, {"C", "E"}, {"A", "C", "D"}, {"A", "C", "E"}}},
+		{t: []Transaction{{"A", "B"}, {"B", "C"}, {"A", "D"}, {"B", "D"}},
+			items:  []Itemset{{"A"}, {"B"}, {"C"}, {"D"}},
+			minsup: 0.5,
+			want:   []Itemset{{"A"}, {"B"}, {"D"}}},
+		{t: []Transaction{{"Peter", "Gracie"}, {"Jack", "Barley"}, {"Max", "Tom"}, {"Tom", "Barley"}, {"Barley", "Jack"}},
+			items:  []Itemset{{"Peter"}, {"Gracie"}, {"Jack"}, {"Barley"}, {"Tom"}},
+			minsup: 0.6,
+			want:   []Itemset{{"Barley"}}},
+		{t: []Transaction{},
+			items:  []Itemset{{"Peter"}, {"Gracie"}, {"Jack"}, {"Barley"}, {"Tom"}},
+			minsup: 0.0,
+			want:   []Itemset{}},
+		{t: []Transaction{{"Peter"}, {"Gracie"}},
+			items:  []Itemset{{"Peter"}, {"Gracie"}, {"Jack"}, {"Barley"}, {"Tom"}},
+			minsup: 1.0,
+			want:   []Itemset{}},
+	}
 
-var cases = []struct {
-	t      []Transaction
-	items  []Itemset
-	minsup float64
-	want   []Itemset
-}{
-	{[]Transaction{{"A", "B"}, {"B", "C"}, {"A", "D"}, {"B", "D"}},
-		[]Itemset{{"A"}, {"B"}, {"C"}, {"D"}}, 0.0, []Itemset{{"A"}, {"B"}, {"C"}, {"D"}}},
-	{[]Transaction{{"A", "B"}, {"B", "C"}, {"A", "D"}, {"B", "D"}},
-		[]Itemset{{"A"}, {"B"}, {"C"}, {"D"}}, 0.5, []Itemset{{"A"}, {"B"}, {"D"}}},
-	{[]Transaction{{"Hund", "Katze"}, {"Maus", "Kind"}, {"Vater", "Mutter"}, {"Mutter", "Kind"}, {"Kind", "Maus"}},
-		[]Itemset{{"Hund"}, {"Katze"}, {"Maus"}, {"Kind"}, {"Mutter"}}, 0.6, []Itemset{{"Kind"}}},
-	{[]Transaction{},
-		[]Itemset{{"Hund"}, {"Katze"}, {"Maus"}, {"Kind"}, {"Mutter"}}, 0.0, []Itemset{}},
-	{[]Transaction{{"Hund"}, {"Katze"}},
-		[]Itemset{{"Hund"}, {"Katze"}, {"Maus"}, {"Kind"}, {"Mutter"}}, 1.0, []Itemset{}},
+	for _, c := range cases {
+		got := Apriori(c.t, c.items, c.minsup)
+		if !equalSets(c.want, got) {
+			t.Errorf("Apriori(%q, %f): \n got: %q\n, want: %q", c.t, c.minsup, got, c.want)
+		}
+	}
 }
 
 func TestGenerateTransactions(t *testing.T) {
@@ -43,10 +55,26 @@ func TestGenerateTransactions(t *testing.T) {
 }
 
 func TestFrequentItemSets(t *testing.T) {
-	for _, c := range cases {
+	testcases := []struct {
+		t      []Transaction
+		items  []Itemset
+		minsup float64
+		want   []Itemset
+	}{
+		{t: []Transaction{{"A", "B"}, {"B", "C"}, {"A", "D"}, {"B", "D"}},
+			items:  []Itemset{{"A"}, {"B"}, {"C"}, {"D"}, {"A", "B"}},
+			minsup: 0.5,
+			want:   []Itemset{{"A"}, {"B"}, {"D"}}},
+		{t: []Transaction{},
+			items:  []Itemset{{"A"}, {"B"}, {"C"}, {"D"}, {"E"}},
+			minsup: 0.0,
+			want:   []Itemset{}},
+	}
+
+	for _, c := range testcases {
 		got := FrequentItemsets(c.t, c.items, c.minsup)
 		if !equalSets(c.want, got) {
-			t.Errorf("FrequentItemSets() == %q, want %q", got, c.want)
+			t.Errorf("FrequentItemSets(%q, %f) == %q, want %q", c.t, c.minsup, got, c.want)
 		}
 	}
 }
@@ -62,17 +90,10 @@ func TestCombineItemset(t *testing.T) {
 	}
 	for _, c := range testcases {
 		got := CombineItemset(c.in[0], c.in[1])
-		fmt.Println(got, c.want)
 		if !c.want.Equals(got) {
-			t.Errorf("CombineItemset() == %q, want %q", got, c.want)
+			t.Errorf("CombineItemset(%q, %q) == %q, want %q", c.in[0], c.in[1], got, c.want)
 		}
 	}
-
-}
-
-func TestApriori(t *testing.T) {
-	c := cases[0]
-	fmt.Println(Apriori(c.t, c.items, c.minsup))
 }
 
 func equalSets(a []Itemset, b []Itemset) bool {

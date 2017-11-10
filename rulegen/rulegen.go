@@ -42,8 +42,8 @@ func (t Transaction) Contains(item string) bool {
 // TODO use pointers?
 func GenerateTransactions(n int, items []string) []Transaction {
 	r := rand.New(rand.NewSource(time.Now().Unix()))
-
 	transactions := make([]Transaction, n)
+
 	for i := 0; i < n; i++ {
 		tLength := r.Intn(len(items)-1) + 2
 		perm := r.Perm(len(items))
@@ -75,12 +75,16 @@ func FrequentItemsets(t []Transaction, itemsets []Itemset, minsup float64) []Ite
 	return frequent
 }
 
-func Apriori(t []Transaction, items []string, minsup float64) []Itemset {
-	frequent1 := FrequentItemsets(t, items, minsup)
-	candidates1 := GenerateCandidates(frequent1)
-	//frequent2 := FrequentItemsets(t, candidates1, minsup)
-	//candidates2 := GenerateCandidates(frequent2)
-	return candidates1
+func Apriori(t []Transaction, itemsets []Itemset, minsup float64) []Itemset {
+	frequent := FrequentItemsets(t, itemsets, minsup)
+	result := frequent
+
+	for len(frequent) > 0 {
+		candidates := GenerateCandidates(frequent)
+		frequent = FrequentItemsets(t, candidates, minsup)
+		result = append(result, frequent...)
+	}
+	return result
 }
 
 // TODO Use Channels!
@@ -90,7 +94,9 @@ func GenerateCandidates(itemsets []Itemset) []Itemset {
 	for i := 0; i < len(itemsets); i++ {
 		for j := i + 1; j < len(itemsets); j++ {
 			c := CombineItemset(itemsets[i], itemsets[j])
-			candidates = append(candidates, c)
+			if c != nil {
+				candidates = append(candidates, c)
+			}
 		}
 	}
 	return candidates
