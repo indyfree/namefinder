@@ -1,6 +1,8 @@
 package rulegen
 
-import "testing"
+import (
+	"testing"
+)
 
 type testpair struct {
 	transactions [][]string
@@ -22,5 +24,23 @@ func TestGenerateTransActions(t *testing.T) {
 	if len(transactions) != tnumber {
 		t.Errorf("Number of generated transaction does not match, want: %d, got: %d",
 			tnumber, len(transactions))
+	}
+}
+
+func TestFrequentItemSets(t *testing.T) {
+	cases := []struct {
+		t      Transactions
+		items  []string
+		minsup float64
+		want   Itemsets
+	}{
+		{Transactions{{"A", "B"}, {"B", "C"}, {"A", "D"}, {"D", "B"}},
+			[]string{"A", "B", "C", "D"}, 0.5, Itemsets{{"A"}, {"B"}, {"D"}}},
+	}
+	for _, c := range cases {
+		got := FrequentItemsets(c.t, c.items, c.minsup)
+		if !c.want.isEqual(got) {
+			t.Errorf("FrequentItemSets() == %q, want %q", got, c.want)
+		}
 	}
 }
