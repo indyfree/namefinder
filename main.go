@@ -1,21 +1,22 @@
 package main
 
 import (
-	"fmt"
 	"log"
-	"net/http"
+	"time"
 
 	mgo "gopkg.in/mgo.v2"
 
 	rg "github.com/indyfree/namefinder/rulegen"
-	rs "github.com/indyfree/namefinder/ruleserver"
 )
 
 func main() {
-	t := rg.GenerateTransactions(20, []string{"A", "B", "C", "D", "E", "F", "G", "H"})
-	fmt.Println(t)
-	router := rs.NewRouter()
-	log.Fatal(http.ListenAndServe(":8080", router))
+	defer timeTrack(time.Now(), "GenerateTransactions")
+	rg.GenerateTransactions(200000, []string{"A", "B", "C", "D", "E", "F", "G", "H"})
+	//fmt.Println(t)
+
+	// fmt.Println(t)
+	// router := rs.NewRouter()
+	// log.Fatal(http.ListenAndServe(":8080", router))
 
 }
 
@@ -44,4 +45,9 @@ func InsertSampleData() {
 			log.Println(err)
 		}
 	}
+}
+
+func timeTrack(start time.Time, name string) {
+	elapsed := time.Since(start)
+	log.Printf("%s took %s", name, elapsed)
 }
