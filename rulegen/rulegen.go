@@ -21,6 +21,15 @@ func (a Itemset) Equals(b Itemset) bool {
 	return true
 }
 
+func (t Transaction) ContainsSet(itemset Itemset) bool {
+	for _, item := range itemset {
+		if !t.Contains(item) {
+			return false
+		}
+	}
+	return true
+}
+
 func (t Transaction) Contains(item string) bool {
 	for _, v := range t {
 		if item == v {
@@ -48,19 +57,19 @@ func GenerateTransactions(n int, items []string) []Transaction {
 	return transactions
 }
 
-func FrequentItemsets(t []Transaction, items []string, minsup float64) []Itemset {
+func FrequentItemsets(t []Transaction, itemsets []Itemset, minsup float64) []Itemset {
 	frequent := make([]Itemset, 0)
 
-	for _, item := range items {
+	for _, set := range itemsets {
 		count := 0
 		for _, t := range t {
-			if t.Contains(item) {
+			if t.ContainsSet(set) {
 				count++
 			}
 		}
 		sup := float64(count) / float64(len(t))
 		if sup >= minsup {
-			frequent = append(frequent, []string{item})
+			frequent = append(frequent, set)
 		}
 	}
 	return frequent
