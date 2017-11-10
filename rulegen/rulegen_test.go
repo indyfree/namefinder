@@ -15,20 +15,20 @@ type testpair struct {
 
 var cases = []struct {
 	t      []Transaction
-	items  []string
+	items  []Itemset
 	minsup float64
 	want   []Itemset
 }{
-	{[]Transaction{{"A", "B"}, {"B", "C"}, {"A", "D"}, {"D", "B"}},
-		[]string{"A", "B", "C", "D"}, 0.0, []Itemset{{"A"}, {"B"}, {"C"}, {"D"}}},
-	{[]Transaction{{"A", "B"}, {"B", "C"}, {"A", "D"}, {"D", "B"}},
-		[]string{"A", "B", "C", "D"}, 0.5, []Itemset{{"A"}, {"B"}, {"D"}}},
+	{[]Transaction{{"A", "B"}, {"B", "C"}, {"A", "D"}, {"B", "D"}},
+		[]Itemset{{"A"}, {"B"}, {"C"}, {"D"}}, 0.0, []Itemset{{"A"}, {"B"}, {"C"}, {"D"}}},
+	{[]Transaction{{"A", "B"}, {"B", "C"}, {"A", "D"}, {"B", "D"}},
+		[]Itemset{{"A"}, {"B"}, {"C"}, {"D"}}, 0.5, []Itemset{{"A"}, {"B"}, {"D"}}},
 	{[]Transaction{{"Hund", "Katze"}, {"Maus", "Kind"}, {"Vater", "Mutter"}, {"Mutter", "Kind"}, {"Kind", "Maus"}},
-		[]string{"Hund", "Katze", "Maus", "Kind", "Mutter"}, 0.6, []Itemset{{"Kind"}}},
+		[]Itemset{{"Hund"}, {"Katze"}, {"Maus"}, {"Kind"}, {"Mutter"}}, 0.6, []Itemset{{"Kind"}}},
 	{[]Transaction{},
-		[]string{"Hund", "Katze", "Maus", "Kind", "Mutter"}, 0.0, []Itemset{}},
+		[]Itemset{{"Hund"}, {"Katze"}, {"Maus"}, {"Kind"}, {"Mutter"}}, 0.0, []Itemset{}},
 	{[]Transaction{{"Hund"}, {"Katze"}},
-		[]string{"Hund", "Katze", "Maus", "Kind", "Mutter"}, 1.0, []Itemset{}},
+		[]Itemset{{"Hund"}, {"Katze"}, {"Maus"}, {"Kind"}, {"Mutter"}}, 1.0, []Itemset{}},
 }
 
 func TestGenerateTransactions(t *testing.T) {
@@ -49,6 +49,25 @@ func TestFrequentItemSets(t *testing.T) {
 			t.Errorf("FrequentItemSets() == %q, want %q", got, c.want)
 		}
 	}
+}
+
+func TestCombineItemset(t *testing.T) {
+	testcases := []struct {
+		in   []Itemset
+		want Itemset
+	}{
+		{[]Itemset{{"A"}, {"A"}}, nil},
+		{[]Itemset{{"A", "B", "C"}, {"A", "B", "D"}}, Itemset{"A", "B", "C", "D"}},
+		{[]Itemset{{"A", "B", "C"}, {"A", "C", "D"}}, nil},
+	}
+	for _, c := range testcases {
+		got := CombineItemset(c.in[0], c.in[1])
+		fmt.Println(got, c.want)
+		if !c.want.Equals(got) {
+			t.Errorf("CombineItemset() == %q, want %q", got, c.want)
+		}
+	}
+
 }
 
 func TestApriori(t *testing.T) {

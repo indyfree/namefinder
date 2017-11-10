@@ -89,9 +89,25 @@ func GenerateCandidates(itemsets []Itemset) []Itemset {
 
 	for i := 0; i < len(itemsets); i++ {
 		for j := i + 1; j < len(itemsets); j++ {
-			c := append(itemsets[i], itemsets[j]...)
+			c := CombineItemset(itemsets[i], itemsets[j])
 			candidates = append(candidates, c)
 		}
 	}
 	return candidates
+}
+
+// Only combine itemsets that are different at the last index
+// Apriori premise
+// TODO Make Method, changing own type?
+func CombineItemset(a Itemset, b Itemset) Itemset {
+	if len(a) != len(b) || a[len(a)-1] == b[len(b)-1] {
+		return nil
+	}
+
+	for i := 0; i < len(a)-1; i++ {
+		if a[i] != b[i] {
+			return nil
+		}
+	}
+	return append(a, b[len(b)-1])
 }
