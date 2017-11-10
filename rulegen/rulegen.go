@@ -5,9 +5,8 @@ import (
 	"time"
 )
 
-type Transactions [][]string
+type Transaction []string
 type Itemset []string
-type Itemsets []Itemset
 
 // TODO refactor!
 func (a Itemset) Equals(b Itemset) bool {
@@ -22,23 +21,20 @@ func (a Itemset) Equals(b Itemset) bool {
 	return true
 }
 
-func (a Itemsets) Equals(b Itemsets) bool {
-	if len(a) != len(b) {
-		return false
-	}
-	for i := range a {
-		if !a[i].Equals(b[i]) {
-			return false
+func (t Transaction) Contains(item string) bool {
+	for _, v := range t {
+		if item == v {
+			return true
 		}
 	}
-	return true
+	return false
 }
 
 // TODO use pointers?
-func GenerateTransactions(n int, items []string) Transactions {
+func GenerateTransactions(n int, items []string) []Transaction {
 	r := rand.New(rand.NewSource(time.Now().Unix()))
 
-	transactions := make([][]string, n)
+	transactions := make([]Transaction, n)
 	for i := 0; i < n; i++ {
 		tLength := r.Intn(len(items)-1) + 2
 		perm := r.Perm(len(items))
@@ -52,13 +48,13 @@ func GenerateTransactions(n int, items []string) Transactions {
 	return transactions
 }
 
-func FrequentItemsets(t Transactions, items []string, minsup float64) Itemsets {
-	frequent := make(Itemsets, 0)
+func FrequentItemsets(t []Transaction, items []string, minsup float64) []Itemset {
+	frequent := make([]Itemset, 0)
 
 	for _, item := range items {
 		count := 0
 		for _, t := range t {
-			if ItemInTransaction(item, t) {
+			if t.Contains(item) {
 				count++
 			}
 		}
@@ -68,13 +64,4 @@ func FrequentItemsets(t Transactions, items []string, minsup float64) Itemsets {
 		}
 	}
 	return frequent
-}
-
-func ItemInTransaction(item string, transaction []string) bool {
-	for _, v := range transaction {
-		if item == v {
-			return true
-		}
-	}
-	return false
 }

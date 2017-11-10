@@ -30,18 +30,30 @@ func TestGenerateTransactions(t *testing.T) {
 
 func TestFrequentItemSets(t *testing.T) {
 	cases := []struct {
-		t      Transactions
+		t      []Transaction
 		items  []string
 		minsup float64
-		want   Itemsets
+		want   []Itemset
 	}{
-		{Transactions{{"A", "B"}, {"B", "C"}, {"A", "D"}, {"D", "B"}},
-			[]string{"A", "B", "C", "D"}, 0.5, Itemsets{{"A"}, {"B"}, {"D"}}},
+		{[]Transaction{{"A", "B"}, {"B", "C"}, {"A", "D"}, {"D", "B"}},
+			[]string{"A", "B", "C", "D"}, 0.5, []Itemset{{"A"}, {"B"}, {"D"}}},
 	}
 	for _, c := range cases {
 		got := FrequentItemsets(c.t, c.items, c.minsup)
-		if !c.want.Equals(got) {
+		if !equalSets(c.want, got) {
 			t.Errorf("FrequentItemSets() == %q, want %q", got, c.want)
 		}
 	}
+}
+
+func equalSets(a []Itemset, b []Itemset) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	for i := range a {
+		if !a[i].Equals(b[i]) {
+			return false
+		}
+	}
+	return true
 }
