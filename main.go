@@ -4,14 +4,14 @@ import (
 	"log"
 	"time"
 
-	mgo "gopkg.in/mgo.v2"
+	"github.com/indyfree/namefinder/apriori"
 
-	rg "github.com/indyfree/namefinder/rulegen"
+	mgo "gopkg.in/mgo.v2"
 )
 
 func main() {
 	defer timeTrack(time.Now(), "GenerateTransactions")
-	rg.GenerateTransactions(200000, []string{"A", "B", "C", "D", "E", "F", "G", "H"})
+	t := GenerateTransactions(2000, []string{"A", "B", "C", "D", "E", "F", "G", "H"})
 	//fmt.Println(t)
 
 	// fmt.Println(t)
@@ -29,7 +29,7 @@ func InsertSampleData() {
 
 	c := session.DB("namefinder").C("rules")
 
-	rules := []rg.AssociationRule{
+	rules := []apriori.AssociationRule{
 		{[]string{"bailey"}, []string{"max", "charlie"}, 0.8, 0.8, 0.3},
 		{[]string{"bailey"}, []string{"rocky"}, 0.5, 0.5, 0.3},
 		{[]string{"max"}, []string{"buddy", "rocky"}, 0.8, 0.6, 0.8},

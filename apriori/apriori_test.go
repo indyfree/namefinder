@@ -1,4 +1,4 @@
-package rulegen
+package apriori
 
 import (
 	"testing"
@@ -36,7 +36,7 @@ func TestApriori(t *testing.T) {
 	}
 
 	for _, c := range cases {
-		got := Apriori(c.t, c.items, c.minsup)
+		got := Run(c.t, c.items, c.minsup)
 		if !equalSets(c.want, got) {
 			t.Errorf("Apriori(%q, %f): \n got: %q\n, want: %q", c.t, c.minsup, got, c.want)
 		}
