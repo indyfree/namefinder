@@ -8,12 +8,7 @@ import (
 func GetRules(t []Itemset, minsup float64, minconf float64) []AssociationRule {
 	alphabet := FindAlphabet(t)
 	fsets := Apriori(t, alphabet, minsup)
-	srules := FindStrongRules(fsets, minconf)
-	return srules
-}
-
-func FindStrongRules(fsets []FrequentItemset, minconf float64) []AssociationRule {
-	result := make([]AssociationRule, 0)
+	srules := make([]AssociationRule, 0)
 
 	// Lookup map for support value
 	smap := make(map[string]float64)
@@ -21,6 +16,7 @@ func FindStrongRules(fsets []FrequentItemset, minconf float64) []AssociationRule
 		smap[fmt.Sprintf("%s", *f.items)] = f.support
 	}
 
+	// Find strong rules
 	for _, f := range fsets {
 		rules := ConstructRules(*f.items)
 		for _, r := range rules {
@@ -28,11 +24,11 @@ func FindStrongRules(fsets []FrequentItemset, minconf float64) []AssociationRule
 			if conf >= minconf {
 				r.Confidence = conf
 				r.Support = f.support
-				result = append(result, r)
+				srules = append(srules, r)
 			}
 		}
 	}
-	return result
+	return srules
 }
 
 // Construct 1-Rule
