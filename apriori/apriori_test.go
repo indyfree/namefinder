@@ -36,11 +36,21 @@ func TestApriori(t *testing.T) {
 	}
 
 	for _, c := range cases {
-		got := Run(c.t, c.items, c.minsup)
+		fsets := Run(c.t, c.items, c.minsup)
+		got := GetItemset(fsets)
 		if !equalSets(c.want, got) {
 			t.Errorf("Apriori(%q, %f): \n got: %q\n, want: %q", c.t, c.minsup, got, c.want)
 		}
 	}
+
+}
+
+func GetItemset(fsets []FrequentItemset) []Itemset {
+	items := make([]Itemset, len(fsets))
+	for i, v := range fsets {
+		items[i] = *v.items
+	}
+	return items
 }
 
 func TestFrequentItemSets(t *testing.T) {
@@ -61,7 +71,8 @@ func TestFrequentItemSets(t *testing.T) {
 	}
 
 	for _, c := range testcases {
-		got := FrequentItemsets(c.t, c.items, c.minsup)
+		fsets := FrequentItemsets(c.t, c.items, c.minsup)
+		got := GetItemset(fsets)
 		if !equalSets(c.want, got) {
 			t.Errorf("FrequentItemSets(%q, %f) == %q, want %q", c.t, c.minsup, got, c.want)
 		}

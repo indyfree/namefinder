@@ -1,6 +1,6 @@
 package apriori
 
-func Run(t []Transaction, itemsets []Itemset, minsup float64) []Itemset {
+func Run(t []Transaction, itemsets []Itemset, minsup float64) []FrequentItemset {
 	fsets := FrequentItemsets(t, itemsets, minsup)
 	result := fsets
 
@@ -12,10 +12,10 @@ func Run(t []Transaction, itemsets []Itemset, minsup float64) []Itemset {
 	return result
 }
 
-func FrequentItemsets(t []Transaction, itemsets []Itemset, minsup float64) []Itemset {
-	frequent := make([]Itemset, 0)
+func FrequentItemsets(t []Transaction, itemsets []Itemset, minsup float64) []FrequentItemset {
+	frequent := make([]FrequentItemset, 0)
 
-	for _, set := range itemsets {
+	for i, set := range itemsets {
 		count := 0
 		for _, t := range t {
 			if t.ContainsSet(set) {
@@ -24,19 +24,19 @@ func FrequentItemsets(t []Transaction, itemsets []Itemset, minsup float64) []Ite
 		}
 		sup := float64(count) / float64(len(t))
 		if sup >= minsup {
-			frequent = append(frequent, set)
+			frequent = append(frequent, FrequentItemset{&itemsets[i], sup})
 		}
 	}
 	return frequent
 }
 
 // TODO Use Channels!
-func GenerateCandidates(itemsets []Itemset) []Itemset {
+func GenerateCandidates(fsets []FrequentItemset) []Itemset {
 	candidates := make([]Itemset, 0)
 
-	for i := 0; i < len(itemsets); i++ {
-		for j := i + 1; j < len(itemsets); j++ {
-			c := CombineItemset(itemsets[i], itemsets[j])
+	for i := 0; i < len(fsets); i++ {
+		for j := i + 1; j < len(fsets); j++ {
+			c := CombineItemset(*fsets[i].items, *fsets[j].items)
 			if c != nil {
 				candidates = append(candidates, c)
 			}

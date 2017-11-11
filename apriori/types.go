@@ -21,6 +21,11 @@ func (a AssociationRule) String() string {
 type Transaction []string
 type Itemset []string
 
+type FrequentItemset struct {
+	items   *Itemset
+	support float64
+}
+
 // TODO refactor!
 func (a Itemset) Equals(b Itemset) bool {
 	if len(a) != len(b) {
