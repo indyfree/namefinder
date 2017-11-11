@@ -1,28 +1,28 @@
 package associationrules
 
-func Apriori(t []Transaction, itemsets []Itemset, minsup float64) []FrequentItemset {
-	fsets := FrequentItemsets(t, itemsets, minsup)
+func Apriori(transactions []Itemset, itemsets []Itemset, minsup float64) []FrequentItemset {
+	fsets := FrequentItemsets(transactions, itemsets, minsup)
 	result := fsets
 
 	for len(fsets) > 0 {
 		candidates := GenerateCandidates(fsets)
-		fsets = FrequentItemsets(t, candidates, minsup)
+		fsets = FrequentItemsets(transactions, candidates, minsup)
 		result = append(result, fsets...)
 	}
 	return result
 }
 
-func FrequentItemsets(t []Transaction, itemsets []Itemset, minsup float64) []FrequentItemset {
+func FrequentItemsets(transactions []Itemset, itemsets []Itemset, minsup float64) []FrequentItemset {
 	frequent := make([]FrequentItemset, 0)
 
 	for i, set := range itemsets {
 		count := 0
-		for _, t := range t {
+		for _, t := range transactions {
 			if t.ContainsSet(set) {
 				count++
 			}
 		}
-		sup := float64(count) / float64(len(t))
+		sup := float64(count) / float64(len(transactions))
 		if sup >= minsup {
 			frequent = append(frequent, FrequentItemset{&itemsets[i], sup})
 		}

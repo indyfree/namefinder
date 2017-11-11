@@ -18,7 +18,6 @@ func (a AssociationRule) String() string {
 	return fmt.Sprintf("%s => %s, sup: %f, conf: %f, lift: %f", a.A, a.B, a.Support, a.Confidence, a.Lift)
 }
 
-type Transaction []string
 type Itemset []string
 
 type FrequentItemset struct {
@@ -31,29 +30,29 @@ func (f FrequentItemset) String() string {
 }
 
 // TODO refactor!
-func (a Itemset) Equals(b Itemset) bool {
-	if len(a) != len(b) {
+func (s Itemset) Equals(b Itemset) bool {
+	if len(s) != len(b) {
 		return false
 	}
-	for i := range a {
-		if a[i] != b[i] {
+	for i := range s {
+		if s[i] != b[i] {
 			return false
 		}
 	}
 	return true
 }
 
-func (t Transaction) ContainsSet(itemset Itemset) bool {
+func (s Itemset) ContainsSet(itemset Itemset) bool {
 	for _, item := range itemset {
-		if !t.Contains(item) {
+		if !s.Contains(item) {
 			return false
 		}
 	}
 	return true
 }
 
-func (t Transaction) Contains(item string) bool {
-	for _, v := range t {
+func (s Itemset) Contains(item string) bool {
+	for _, v := range s {
 		if item == v {
 			return true
 		}

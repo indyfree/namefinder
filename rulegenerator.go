@@ -8,9 +8,9 @@ import (
 )
 
 // TODO use pointers?
-func GenerateTransactions(n int, items []string) []ar.Transaction {
+func GenerateTransactions(n int, items []string) []ar.Itemset {
 	r := rand.New(rand.NewSource(time.Now().Unix()))
-	transactions := make([]ar.Transaction, n)
+	transactions := make([]ar.Itemset, n)
 
 	for i := 0; i < n; i++ {
 		tLength := r.Intn(len(items)-1) + 2
