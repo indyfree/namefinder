@@ -43,17 +43,6 @@ func TestApriori(t *testing.T) {
 	}
 }
 
-func TestGenerateTransactions(t *testing.T) {
-	itemset := []string{"A", "B", "C", "D"}
-	tnumber := 100
-	transactions := GenerateTransactions(tnumber, itemset)
-
-	if len(transactions) != tnumber {
-		t.Errorf("Number of generated transaction does not match, want: %d, got: %d",
-			tnumber, len(transactions))
-	}
-}
-
 func TestFrequentItemSets(t *testing.T) {
 	testcases := []struct {
 		t      []Transaction
