@@ -1,6 +1,6 @@
-package apriori
+package associationrules
 
-func Run(t []Transaction, itemsets []Itemset, minsup float64) []FrequentItemset {
+func Apriori(t []Transaction, itemsets []Itemset, minsup float64) []FrequentItemset {
 	fsets := FrequentItemsets(t, itemsets, minsup)
 	result := fsets
 

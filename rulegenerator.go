@@ -4,13 +4,13 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/indyfree/namefinder/apriori"
+	ar "github.com/indyfree/namefinder/associationrules"
 )
 
 // TODO use pointers?
-func GenerateTransactions(n int, items []string) []apriori.Transaction {
+func GenerateTransactions(n int, items []string) []ar.Transaction {
 	r := rand.New(rand.NewSource(time.Now().Unix()))
-	transactions := make([]apriori.Transaction, n)
+	transactions := make([]ar.Transaction, n)
 
 	for i := 0; i < n; i++ {
 		tLength := r.Intn(len(items)-1) + 2

@@ -1,19 +1,21 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"time"
 
-	"github.com/indyfree/namefinder/apriori"
+	ar "github.com/indyfree/namefinder/associationrules"
 
 	mgo "gopkg.in/mgo.v2"
 )
 
 func main() {
 	defer timeTrack(time.Now(), "GenerateTransactions")
-	t := GenerateTransactions(2000, []string{"A", "B", "C", "D", "E", "F", "G", "H"})
-	//fmt.Println(t)
+	t := GenerateTransactions(200, []string{"A", "B", "C", "D", "E", "F", "G", "H"})
 
+	sets := []ar.Itemset{{"A"}, {"B"}, {"C"}, {"D"}, {"E"}, {"F"}, {"G"}, {"H"}}
+	fmt.Println(ar.Apriori(t, sets, 0.20))
 	// fmt.Println(t)
 	// router := rs.NewRouter()
 	// log.Fatal(http.ListenAndServe(":8080", router))
@@ -29,7 +31,7 @@ func InsertSampleData() {
 
 	c := session.DB("namefinder").C("rules")
 
-	rules := []apriori.AssociationRule{
+	rules := []ar.AssociationRule{
 		{[]string{"bailey"}, []string{"max", "charlie"}, 0.8, 0.8, 0.3},
 		{[]string{"bailey"}, []string{"rocky"}, 0.5, 0.5, 0.3},
 		{[]string{"max"}, []string{"buddy", "rocky"}, 0.8, 0.6, 0.8},

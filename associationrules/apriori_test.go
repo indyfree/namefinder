@@ -1,4 +1,4 @@
-package apriori
+package associationrules
 
 import (
 	"testing"
