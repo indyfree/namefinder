@@ -1,9 +1,11 @@
 package associationrules
 
-func Apriori(transactions []Itemset, itemsets []Itemset, minsup float64) []FrequentItemset {
-	fsets := FrequentItemsets(transactions, itemsets, minsup)
+func Apriori(transactions []Itemset, alphabet []Itemset, minsup float64) []FrequentItemset {
+	// Find frequent 1-Itemsets first
+	fsets := FrequentItemsets(transactions, alphabet, minsup)
 	result := fsets
 
+	// Generate candidates from frequent k-1 Itemsets and find frequent ones
 	for len(fsets) > 0 {
 		candidates := GenerateCandidates(fsets)
 		fsets = FrequentItemsets(transactions, candidates, minsup)
