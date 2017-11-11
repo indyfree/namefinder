@@ -95,3 +95,16 @@ func TestCombineItemset(t *testing.T) {
 		}
 	}
 }
+
+// Helper function
+func IsEqual(a []Itemset, b []Itemset) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	for i := range a {
+		if !a[i].Equals(b[i]) {
+			return false
+		}
+	}
+	return true
+}

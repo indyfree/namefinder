@@ -49,10 +49,8 @@ func TestConstructRules(t *testing.T) {
 
 	for _, c := range cases {
 		got := ConstructRules(c.in)
-		for i, rule := range got {
-			if !c.want[i].Equals(rule) {
-				t.Errorf("ConstructRules(%q) == \n%q want: \n%q", c.in, got, c.want)
-			}
+		if !equalRules(got, c.want) {
+			t.Errorf("ConstructRules(%q) == \n%q want: \n%q", c.in, got, c.want)
 		}
 	}
 }
@@ -78,10 +76,20 @@ func TestGetRules(t *testing.T) {
 
 	for _, c := range cases {
 		got := GetRules(c.t, c.minsup, c.minconf)
-		for i, rule := range got {
-			if !c.want[i].Equals(rule) {
-				t.Errorf("GetRules(): \n got: %q\n, want: %q", got, c.want)
-			}
+		if !equalRules(got, c.want) {
+			t.Errorf("GetRules(): \n got: %q\n, want: %q", got, c.want)
 		}
 	}
+}
+
+func equalRules(a []AssociationRule, b []AssociationRule) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	for i := range a {
+		if !a[i].Equals(b[i]) {
+			return false
+		}
+	}
+	return true
 }
