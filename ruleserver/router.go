@@ -21,11 +21,13 @@ func Index(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Welcome to the namefinder service")
 }
 
+// TODO: Return json headers and errorcodes
 func RulesIndex(w http.ResponseWriter, r *http.Request) {
 	rules := GetAllRules()
 	json.NewEncoder(w).Encode(rules)
 }
 
+// TODO: Return json headers and errorcodes
 func RulesShow(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	rules := GetRules(vars["item"])
