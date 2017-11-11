@@ -2,18 +2,16 @@ package associationrules
 
 import "fmt"
 
-// Association Rule in the form {A => B}, where A and B can be itemsets
+//
+// Association Rules
+//
+// In the form {A => B}, where A and B can be itemsets
 type AssociationRule struct {
 	A          Itemset `json:"a"`
 	B          Itemset `json:"b"`
 	Support    float64 `json:"support"`
 	Confidence float64 `json:"confidence"`
 	Lift       float64 `json:"lift"`
-}
-type Itemset []string
-type FrequentItemset struct {
-	items   *Itemset
-	support float64
 }
 
 func (a AssociationRule) String() string {
@@ -29,9 +27,12 @@ func (a AssociationRule) Equals(b AssociationRule) bool {
 	return true
 }
 
-func (f FrequentItemset) String() string {
-	return fmt.Sprintf("%s:%f", *f.items, f.support)
-}
+//
+// Itemset
+//
+// Association rules base on items in transactions
+//
+type Itemset []string
 
 // TODO refactor!
 func (s Itemset) Equals(b Itemset) bool {
@@ -64,14 +65,15 @@ func (s Itemset) Contains(item string) bool {
 	return false
 }
 
-func IsEqual(a []Itemset, b []Itemset) bool {
-	if len(a) != len(b) {
-		return false
-	}
-	for i := range a {
-		if !a[i].Equals(b[i]) {
-			return false
-		}
-	}
-	return true
+//
+// Frequent Itemset
+//
+// Wrapper type to capsule according support
+type FrequentItemset struct {
+	items   *Itemset
+	support float64
+}
+
+func (f FrequentItemset) String() string {
+	return fmt.Sprintf("%s:%f", *f.items, f.support)
 }
