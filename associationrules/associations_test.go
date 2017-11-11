@@ -23,7 +23,7 @@ func TestFindAlphabet(t *testing.T) {
 
 	for _, c := range cases {
 		got := FindAlphabet(c.in)
-		if !equalSets(c.want, got) {
+		if !IsEqual(c.want, got) {
 			t.Errorf("FindAlphabet() got: %q want: %q", got, c.want)
 		}
 	}
@@ -49,8 +49,10 @@ func TestConstructRules(t *testing.T) {
 
 	for _, c := range cases {
 		got := ConstructRules(c.in)
-		if !equalRules(c.want, got) {
-			t.Errorf("ConstructRules(%q) == \n%q want: \n%q", c.in, got, c.want)
+		for i, rule := range got {
+			if !c.want[i].Equals(rule) {
+				t.Errorf("ConstructRules(%q) == \n%q want: \n%q", c.in, got, c.want)
+			}
 		}
 	}
 }
@@ -76,9 +78,10 @@ func TestGetRules(t *testing.T) {
 
 	for _, c := range cases {
 		got := GetRules(c.t, c.minsup, c.minconf)
-		if !equalRules(c.want, got) {
-			t.Errorf("GetRules(): \n got: %q\n, want: %q", got, c.want)
+		for i, rule := range got {
+			if !c.want[i].Equals(rule) {
+				t.Errorf("GetRules(): \n got: %q\n, want: %q", got, c.want)
+			}
 		}
 	}
-
 }

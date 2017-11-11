@@ -10,9 +10,11 @@ type AssociationRule struct {
 	Confidence float64 `json:"confidence"`
 	Lift       float64 `json:"lift"`
 }
-
-// TODO explain why to declare
-type AssociationRules []AssociationRule
+type Itemset []string
+type FrequentItemset struct {
+	items   *Itemset
+	support float64
+}
 
 func (a AssociationRule) String() string {
 	return fmt.Sprintf("%s => %s, sup: %f, conf: %f, lift: %f", a.A, a.B, a.Support, a.Confidence, a.Lift)
@@ -25,13 +27,6 @@ func (a AssociationRule) Equals(b AssociationRule) bool {
 		return false
 	}
 	return true
-}
-
-type Itemset []string
-
-type FrequentItemset struct {
-	items   *Itemset
-	support float64
 }
 
 func (f FrequentItemset) String() string {
@@ -67,4 +62,16 @@ func (s Itemset) Contains(item string) bool {
 		}
 	}
 	return false
+}
+
+func IsEqual(a []Itemset, b []Itemset) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	for i := range a {
+		if !a[i].Equals(b[i]) {
+			return false
+		}
+	}
+	return true
 }

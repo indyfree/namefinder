@@ -38,7 +38,7 @@ func TestApriori(t *testing.T) {
 	for _, c := range cases {
 		fsets := Apriori(c.t, c.items, c.minsup)
 		got := GetItemset(fsets)
-		if !equalSets(c.want, got) {
+		if !IsEqual(c.want, got) {
 			t.Errorf("Apriori(%q, %f): \n got: %q\n, want: %q", c.t, c.minsup, got, c.want)
 		}
 	}
@@ -73,7 +73,7 @@ func TestFrequentItemSets(t *testing.T) {
 	for _, c := range testcases {
 		fsets := FrequentItemsets(c.t, c.items, c.minsup)
 		got := GetItemset(fsets)
-		if !equalSets(c.want, got) {
+		if !IsEqual(c.want, got) {
 			t.Errorf("FrequentItemSets(%q, %f) == %q, want %q", c.t, c.minsup, got, c.want)
 		}
 	}
@@ -94,28 +94,4 @@ func TestCombineItemset(t *testing.T) {
 			t.Errorf("CombineItemset(%q, %q) == %q, want %q", c.in[0], c.in[1], got, c.want)
 		}
 	}
-}
-
-func equalSets(a []Itemset, b []Itemset) bool {
-	if len(a) != len(b) {
-		return false
-	}
-	for i := range a {
-		if !a[i].Equals(b[i]) {
-			return false
-		}
-	}
-	return true
-}
-
-func equalRules(a []AssociationRule, b []AssociationRule) bool {
-	if len(a) != len(b) {
-		return false
-	}
-	for i := range a {
-		if !a[i].Equals(b[i]) {
-			return false
-		}
-	}
-	return true
 }
