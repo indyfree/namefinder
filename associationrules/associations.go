@@ -6,6 +6,10 @@ import (
 
 // Construct 1-Rule
 func ConstructRules(set Itemset) []AssociationRule {
+	if len(set) <= 1 { // No rules with only 1 element
+		return nil
+	}
+
 	rules := make([]AssociationRule, len(set))
 	for i, _ := range set {
 		rule := AssociationRule{A: Itemset{set[i]}}

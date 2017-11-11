@@ -36,6 +36,13 @@ func TestConstructRules(t *testing.T) {
 			want: []AssociationRule{AssociationRule{A: Itemset{"A"}, B: Itemset{"B", "E"}},
 				AssociationRule{A: Itemset{"B"}, B: Itemset{"A", "E"}}, AssociationRule{A: Itemset{"E"}, B: Itemset{"A", "B"}}},
 		},
+		{in: Itemset{"A", "B"},
+			want: []AssociationRule{AssociationRule{A: Itemset{"A"}, B: Itemset{"B"}},
+				AssociationRule{A: Itemset{"B"}, B: Itemset{"A"}}},
+		},
+		{in: Itemset{"A"},
+			want: []AssociationRule{},
+		},
 	}
 
 	for _, c := range cases {
