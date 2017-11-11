@@ -26,6 +26,10 @@ type FrequentItemset struct {
 	support float64
 }
 
+func (f FrequentItemset) String() string {
+	return fmt.Sprintf("%s:%f", *f.items, f.support)
+}
+
 // TODO refactor!
 func (a Itemset) Equals(b Itemset) bool {
 	if len(a) != len(b) {
