@@ -1,8 +1,39 @@
 package associationrules
 
 import (
+	"fmt"
 	"sort"
 )
+
+func GetRules(t []Itemset, minsup float64, minconf float64) []AssociationRule {
+	alphabet := FindAlphabet(t)
+	fsets := Apriori(t, alphabet, minsup)
+	srules := FindStrongRules(fsets, minconf)
+	return srules
+}
+
+func FindStrongRules(fsets []FrequentItemset, minconf float64) []AssociationRule {
+	result := make([]AssociationRule, 0)
+
+	// Lookup map for support value
+	smap := make(map[string]float64)
+	for _, f := range fsets {
+		smap[fmt.Sprintf("%s", *f.items)] = f.support
+	}
+
+	for _, f := range fsets {
+		rules := ConstructRules(*f.items)
+		for _, r := range rules {
+			conf := f.support / smap[fmt.Sprintf("%s", r.A)]
+			if conf >= minconf {
+				r.Confidence = conf
+				r.Support = f.support
+				result = append(result, r)
+			}
+		}
+	}
+	return result
+}
 
 // Construct 1-Rule
 func ConstructRules(set Itemset) []AssociationRule {

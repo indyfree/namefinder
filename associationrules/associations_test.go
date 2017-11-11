@@ -1,6 +1,8 @@
 package associationrules
 
-import "testing"
+import (
+	"testing"
+)
 
 func TestFindAlphabet(t *testing.T) {
 	cases := []struct {
@@ -51,4 +53,32 @@ func TestConstructRules(t *testing.T) {
 			t.Errorf("ConstructRules(%q) == \n%q want: \n%q", c.in, got, c.want)
 		}
 	}
+}
+
+func TestGetRules(t *testing.T) {
+	cases := []struct {
+		t       []Itemset
+		minsup  float64
+		minconf float64
+		want    []AssociationRule
+	}{
+		{t: []Itemset{{"A", "B"}, {"B", "C"}, {"B", "D"}, {"A", "B", "D"}},
+			minsup:  0.50,
+			minconf: 0.50,
+			want: []AssociationRule{
+				AssociationRule{A: Itemset{"A"}, B: Itemset{"B"}, Support: 0.5, Confidence: 1},
+				AssociationRule{A: Itemset{"B"}, B: Itemset{"A"}, Support: 0.5, Confidence: 0.5},
+				AssociationRule{A: Itemset{"B"}, B: Itemset{"D"}, Support: 0.5, Confidence: 0.5},
+				AssociationRule{A: Itemset{"D"}, B: Itemset{"B"}, Support: 0.5, Confidence: 1},
+			},
+		},
+	}
+
+	for _, c := range cases {
+		got := GetRules(c.t, c.minsup, c.minconf)
+		if !equalRules(c.want, got) {
+			t.Errorf("GetRules(): \n got: %q\n, want: %q", got, c.want)
+		}
+	}
+
 }
