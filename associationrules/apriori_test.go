@@ -107,3 +107,15 @@ func equalSets(a []Itemset, b []Itemset) bool {
 	}
 	return true
 }
+
+func equalRules(a []AssociationRule, b []AssociationRule) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	for i := range a {
+		if !a[i].Equals(b[i]) {
+			return false
+		}
+	}
+	return true
+}

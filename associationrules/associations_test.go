@@ -26,3 +26,22 @@ func TestFindAlphabet(t *testing.T) {
 		}
 	}
 }
+
+func TestConstructRules(t *testing.T) {
+	cases := []struct {
+		in   Itemset
+		want []AssociationRule
+	}{
+		{in: Itemset{"A", "B", "E"},
+			want: []AssociationRule{AssociationRule{A: Itemset{"A"}, B: Itemset{"B", "E"}},
+				AssociationRule{A: Itemset{"B"}, B: Itemset{"A", "E"}}, AssociationRule{A: Itemset{"E"}, B: Itemset{"A", "B"}}},
+		},
+	}
+
+	for _, c := range cases {
+		got := ConstructRules(c.in)
+		if !equalRules(c.want, got) {
+			t.Errorf("ConstructRules(%q) == \n%q want: \n%q", c.in, got, c.want)
+		}
+	}
+}
