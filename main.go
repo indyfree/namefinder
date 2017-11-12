@@ -1,28 +1,25 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"time"
 
-	ar "github.com/indyfree/namefinder/associationrules"
+	"gopkg.in/mgo.v2"
 
-	mgo "gopkg.in/mgo.v2"
+	ar "github.com/indyfree/namefinder/associationrules"
 )
 
 func main() {
-	defer timeTrack(time.Now(), "GenerateTransactions")
-	t := GenerateTransactions(200, []string{"A", "B", "C", "D", "E", "F", "G", "H"})
-
-	sets := []ar.Itemset{{"A"}, {"B"}, {"C"}, {"D"}, {"E"}, {"F"}, {"G"}, {"H"}}
-	fmt.Println(ar.Apriori(t, sets, 0.20))
+	t := GenerateTransactions(20000, []string{"A", "B", "C", "D", "E", "F", "G", "H"})
+	ar.GetRules(t, 0.2, 0.2)
+	// InsertData(rules)
 	// fmt.Println(t)
-	// router := rs.NewRouter()
-	// log.Fatal(http.ListenAndServe(":8080", router))
-
+	//	router := rs.NewRouter()
+	//	log.Fatal(http.ListenAndServe(":8080", router))
 }
 
-func InsertSampleData() {
+func InsertData(rules []ar.AssociationRule) {
+	defer timeTrack(time.Now(), "GenerateTransactions")
 	session, err := mgo.Dial("127.0.0.1:27017")
 	if err != nil {
 		panic(err)
@@ -30,16 +27,6 @@ func InsertSampleData() {
 	defer session.Close()
 
 	c := session.DB("namefinder").C("rules")
-
-	rules := []ar.AssociationRule{
-		{[]string{"bailey"}, []string{"max", "charlie"}, 0.8, 0.8, 0.3},
-		{[]string{"bailey"}, []string{"rocky"}, 0.5, 0.5, 0.3},
-		{[]string{"max"}, []string{"buddy", "rocky"}, 0.8, 0.6, 0.8},
-		{[]string{"max"}, []string{"bailey"}, 0.4, 0.6, 0.8},
-		{[]string{"jack"}, []string{"toby"}, 0.5, 0.5, 0.3},
-		{[]string{"jacky"}, []string{"toby", "rocky"}, 0.7, 0.8, 0.5},
-		{[]string{"buddy"}, []string{"max", "bailey"}, 0.9, 0.5, 0.2},
-	}
 
 	for _, rule := range rules {
 		err = c.Insert(&rule)
