@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"time"
 
@@ -10,7 +11,10 @@ import (
 )
 
 func main() {
-	t := GenerateTransactions(20000, []string{"A", "B", "C", "D", "E", "F", "G", "H"})
+	n := 2000000
+	alphabet := []string{"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"}
+	t := GenerateTransactions(20000, alphabet)
+	fmt.Printf("Mine Assocationrules in %d transactions with an alphabet of size %d\n", n, len(alphabet))
 	ar.GetRules(t, 0.2, 0.2)
 	// InsertData(rules)
 	// fmt.Println(t)
