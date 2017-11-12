@@ -21,10 +21,10 @@ func TestApriori(t *testing.T) {
 			items:  []Itemset{{"A"}, {"B"}, {"C"}, {"D"}},
 			minsup: 0.5,
 			want:   []Itemset{{"A"}, {"B"}, {"D"}}},
-		// {t: []Itemset{{"Peter", "Gracie"}, {"Jack", "Barley"}, {"Max", "Tom"}, {"Tom", "Barley"}, {"Jack", "Barley"}},
-		// 	items:  []Itemset{{"Peter"}, {"Gracie"}, {"Jack"}, {"Barley"}, {"Tom"}},
-		// 	minsup: 0.4,
-		// 	want:   []Itemset{{"Barley"}, {"Jack"}, {"Tom"}}},
+		{t: []Itemset{{"Peter", "Gracie"}, {"Jack", "Barley"}, {"Max", "Tom"}, {"Tom", "Barley"}, {"Jack", "Barley"}},
+			items:  []Itemset{{"Peter"}, {"Gracie"}, {"Jack"}, {"Barley"}, {"Tom"}},
+			minsup: 0.4,
+			want:   []Itemset{{"Barley"}, {"Jack"}, {"Tom"}, {"Barley Jack"}}},
 		{t: []Itemset{},
 			items:  []Itemset{{"Peter"}, {"Gracie"}, {"Jack"}, {"Barley"}, {"Tom"}},
 			minsup: 0.0,
@@ -38,7 +38,7 @@ func TestApriori(t *testing.T) {
 	for _, c := range cases {
 		fsets := Apriori(c.t, c.items, c.minsup)
 		got := GetItemset(fsets)
-		if !IsEqual(c.want, got) {
+		if !isEqualSet(c.want, got) {
 			t.Errorf("Apriori(%q, %f): \n got: %q\n, want: %q", c.t, c.minsup, got, c.want)
 		}
 	}
@@ -78,7 +78,7 @@ func TestFrequentItemSets(t *testing.T) {
 	close(candidates)
 	fsets := FrequentItemsets(c.t, c.minsup, candidates)
 	got := GetItemset(fsets)
-	if !IsEqual(c.want, got) {
+	if !isEqualSet(c.want, got) {
 		t.Errorf("FrequentItemSets(%q, %f) == %q, want %q", c.t, c.minsup, got, c.want)
 	}
 }
@@ -100,15 +100,28 @@ func TestCombineItemset(t *testing.T) {
 	}
 }
 
-// Helper function
-func IsEqual(a []Itemset, b []Itemset) bool {
+//
+// Test helper functions
+//
+
+// Set order does not matter
+func isEqualSet(a []Itemset, b []Itemset) bool {
 	if len(a) != len(b) {
 		return false
 	}
-	for i := range a {
-		if !a[i].Equals(b[i]) {
+	for _, v := range b {
+		if !contains(a, v) {
 			return false
 		}
 	}
 	return true
+}
+
+func contains(a []Itemset, b Itemset) bool {
+	for i, v := range a {
+		if a[i].Equals(v) {
+			return true
+		}
+	}
+	return false
 }

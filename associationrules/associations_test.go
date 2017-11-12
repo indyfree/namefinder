@@ -23,7 +23,7 @@ func TestFindAlphabet(t *testing.T) {
 
 	for _, c := range cases {
 		got := FindAlphabet(c.in)
-		if !IsEqual(c.want, got) {
+		if !isEqualSet(c.want, got) {
 			t.Errorf("FindAlphabet() got: %q want: %q", got, c.want)
 		}
 	}
