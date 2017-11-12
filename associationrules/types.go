@@ -47,8 +47,8 @@ func (s Itemset) Equals(b Itemset) bool {
 	return true
 }
 
-func (s Itemset) ContainsSet(itemset Itemset) bool {
-	for _, item := range itemset {
+func (s Itemset) ContainsSet(b Itemset) bool {
+	for _, item := range b {
 		if !s.Contains(item) {
 			return false
 		}

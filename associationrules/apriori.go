@@ -14,6 +14,7 @@ func Apriori(transactions []Itemset, alphabet []Itemset, minsup float64) []Frequ
 	return result
 }
 
+// TODO Channels! Searching for frequent can happen concurrent
 func FrequentItemsets(transactions []Itemset, itemsets []Itemset, minsup float64) []FrequentItemset {
 	frequent := make([]FrequentItemset, 0)
 
