@@ -1,6 +1,7 @@
 package associationrules
 
 import (
+	"sync"
 	"time"
 )
 
@@ -21,24 +22,47 @@ func Apriori(transactions []Itemset, alphabet []Itemset, minsup float64) []Frequ
 	return results
 }
 
-// TODO Channels! Searching for frequent can happen concurrent
 func FrequentItemsets(transactions []Itemset, minsup float64, candidates <-chan Itemset) []FrequentItemset {
+	// TODO Calculate max number of FrequentItemsets (Number of Candidates)
+	results := make(chan FrequentItemset, len(transactions))
+
+	// Worker Pool to concurrently scan transactions
+	var wg sync.WaitGroup
+	for i := 0; i < 3; i++ {
+		wg.Add(1)
+		go frequentItemWorker(i, &wg, transactions, minsup, candidates, results)
+	}
+	wg.Wait()
+	close(results)
+
+	// Collect results
 	fsets := make([]FrequentItemset, 0)
-	for c := range candidates {
-		count := 0
-		for _, t := range transactions {
-			if t.ContainsSet(c) {
-				count++
-			}
-		}
-		sup := float64(count) / float64(len(transactions))
-		if sup >= minsup {
-			item := c // Copy
-			fset := FrequentItemset{&item, sup}
-			fsets = append(fsets, fset)
-		}
+	for fset := range results {
+		fsets = append(fsets, fset)
 	}
 	return fsets
+}
+
+func frequentItemWorker(w int, wg *sync.WaitGroup, transactions []Itemset, minsup float64,
+	itemset <-chan Itemset, fsets chan<- FrequentItemset) {
+	for i := range itemset {
+		sup := getSupport(transactions, i)
+		if sup >= minsup {
+			item := i // why copy?
+			fsets <- FrequentItemset{&item, sup}
+		}
+	}
+	wg.Done()
+}
+
+func getSupport(transactions []Itemset, set Itemset) float64 {
+	count := 0
+	for _, t := range transactions {
+		if t.ContainsSet(set) {
+			count++
+		}
+	}
+	return float64(count) / float64(len(transactions))
 }
 
 // Channel Generator Pattern
@@ -60,7 +84,6 @@ func GenerateCandidates(fsets []FrequentItemset) <-chan Itemset {
 
 // Only combine itemsets that are different at the last index
 // Apriori premise
-// TODO Make Method, changing own type?
 func CombineItemset(a Itemset, b Itemset) Itemset {
 	if len(a) != len(b) || a[len(a)-1] == b[len(b)-1] {
 		return nil
