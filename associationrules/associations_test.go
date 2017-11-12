@@ -23,7 +23,7 @@ func TestFindAlphabet(t *testing.T) {
 
 	for _, c := range cases {
 		got := FindAlphabet(c.in)
-		if !isEqualSet(c.want, got) {
+		if !hasSameSets(c.want, got) {
 			t.Errorf("FindAlphabet() got: %q want: %q", got, c.want)
 		}
 	}
@@ -80,6 +80,15 @@ func TestGetRules(t *testing.T) {
 			t.Errorf("GetRules(): \n got: %q\n, want: %q", got, c.want)
 		}
 	}
+}
+
+func (a AssociationRule) Equals(b AssociationRule) bool {
+	if !a.A.Equals(b.A) || !a.B.Equals(b.B) {
+		return false
+	} else if a.Support != b.Support || a.Confidence != a.Confidence || a.Lift != b.Lift {
+		return false
+	}
+	return true
 }
 
 func equalRules(a []AssociationRule, b []AssociationRule) bool {

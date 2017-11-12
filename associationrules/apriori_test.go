@@ -38,7 +38,7 @@ func TestApriori(t *testing.T) {
 	for _, c := range cases {
 		fsets := Apriori(c.t, c.items, c.minsup)
 		got := GetItemset(fsets)
-		if !isEqualSet(c.want, got) {
+		if !hasSameSets(c.want, got) {
 			t.Errorf("Apriori(%q, %f): \n got: %q\n, want: %q", c.t, c.minsup, got, c.want)
 		}
 	}
@@ -78,7 +78,7 @@ func TestFrequentItemSets(t *testing.T) {
 	close(candidates)
 	fsets := FrequentItemsets(c.t, c.minsup, candidates)
 	got := GetItemset(fsets)
-	if !isEqualSet(c.want, got) {
+	if !hasSameSets(c.want, got) {
 		t.Errorf("FrequentItemSets(%q, %f) == %q, want %q", c.t, c.minsup, got, c.want)
 	}
 }
@@ -105,7 +105,7 @@ func TestCombineItemset(t *testing.T) {
 //
 
 // Set order does not matter
-func isEqualSet(a []Itemset, b []Itemset) bool {
+func hasSameSets(a []Itemset, b []Itemset) bool {
 	if len(a) != len(b) {
 		return false
 	}
@@ -124,4 +124,16 @@ func contains(a []Itemset, b Itemset) bool {
 		}
 	}
 	return false
+}
+
+func (s Itemset) Equals(b Itemset) bool {
+	if len(s) != len(b) {
+		return false
+	}
+	for i := range s {
+		if s[i] != b[i] {
+			return false
+		}
+	}
+	return true
 }
