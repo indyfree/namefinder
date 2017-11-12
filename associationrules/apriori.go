@@ -1,6 +1,9 @@
 package associationrules
 
+import "time"
+
 func Apriori(transactions []Itemset, alphabet []Itemset, minsup float64) []FrequentItemset {
+	defer timeTrack(time.Now(), "Apriori")
 	// Find frequent 1-Itemsets first
 	fsets := FrequentItemsets(transactions, alphabet, minsup)
 	result := fsets

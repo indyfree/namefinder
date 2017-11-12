@@ -2,22 +2,24 @@ package associationrules
 
 import (
 	"fmt"
+	"log"
 	"sort"
+	"time"
 )
 
 func GetRules(t []Itemset, minsup float64, minconf float64) []AssociationRule {
+	defer timeTrack(time.Now(), "GetRules")
 	alphabet := FindAlphabet(t)
 	fsets := Apriori(t, alphabet, minsup)
-	srules := make([]AssociationRule, 0)
 
-	// Lookup map for support value
+	// Lookup map for support values
 	smap := make(map[string]float64)
-	for _, f := range fsets {
-		smap[fmt.Sprintf("%s", *f.items)] = f.support
-	}
 
 	// Find strong rules
+	defer timeTrack(time.Now(), "FindStrongRules")
+	srules := make([]AssociationRule, 0)
 	for _, f := range fsets {
+		smap[fmt.Sprintf("%s", *f.items)] = f.support
 		rules := ConstructRules(*f.items)
 		for _, r := range rules {
 			conf := f.support / smap[fmt.Sprintf("%s", r.A)]
@@ -57,6 +59,7 @@ func ConstructRules(set Itemset) []AssociationRule {
 // TODO: break up nested for loop
 // Find items which the transactions consist of, return sorted itemset
 func FindAlphabet(transactions []Itemset) []Itemset {
+	defer timeTrack(time.Now(), "FindAlphabet")
 	items := make(Itemset, 0)
 	for _, t := range transactions {
 		for _, titem := range t {
@@ -74,4 +77,10 @@ func FindAlphabet(transactions []Itemset) []Itemset {
 		itemset[i] = is
 	}
 	return itemset
+}
+
+// Profiling Purposes
+func timeTrack(start time.Time, name string) {
+	elapsed := time.Since(start)
+	log.Printf("%s took %s", name, elapsed)
 }
