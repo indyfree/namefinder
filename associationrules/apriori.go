@@ -1,54 +1,61 @@
 package associationrules
 
-import "time"
+import (
+	"time"
+)
 
 func Apriori(transactions []Itemset, alphabet []Itemset, minsup float64) []FrequentItemset {
 	defer timeTrack(time.Now(), "Apriori")
-	// Find frequent 1-Itemsets first
-	fsets := FrequentItemsets(transactions, alphabet, minsup)
-	result := fsets
 
-	// Generate candidates from frequent k-1 Itemsets and find frequent ones
+	//Find frequent 1-Itemsets first
+	candidates := setToChannel(alphabet)
+	fsets := FrequentItemsets(transactions, minsup, candidates)
+	results := fsets
+
+	// Generate candidates from subsequent itemsets and find frequent ones
 	for len(fsets) > 0 {
-		candidates := GenerateCandidates(fsets)
-		fsets = FrequentItemsets(transactions, candidates, minsup)
-		result = append(result, fsets...)
+		candidates = GenerateCandidates(fsets)
+		fsets = FrequentItemsets(transactions, minsup, candidates)
+		results = append(results, fsets...)
 	}
-	return result
+	return results
 }
 
 // TODO Channels! Searching for frequent can happen concurrent
-func FrequentItemsets(transactions []Itemset, itemsets []Itemset, minsup float64) []FrequentItemset {
-	frequent := make([]FrequentItemset, 0)
-
-	for i, set := range itemsets {
+func FrequentItemsets(transactions []Itemset, minsup float64, candidates <-chan Itemset) []FrequentItemset {
+	fsets := make([]FrequentItemset, 0)
+	for c := range candidates {
 		count := 0
 		for _, t := range transactions {
-			if t.ContainsSet(set) {
+			if t.ContainsSet(c) {
 				count++
 			}
 		}
 		sup := float64(count) / float64(len(transactions))
 		if sup >= minsup {
-			frequent = append(frequent, FrequentItemset{&itemsets[i], sup})
+			item := c // Copy
+			fset := FrequentItemset{&item, sup}
+			fsets = append(fsets, fset)
 		}
 	}
-	return frequent
+	return fsets
 }
 
-// TODO Use Channels!
-func GenerateCandidates(fsets []FrequentItemset) []Itemset {
-	candidates := make([]Itemset, 0)
-
-	for i := 0; i < len(fsets); i++ {
-		for j := i + 1; j < len(fsets); j++ {
-			c := CombineItemset(*fsets[i].items, *fsets[j].items)
-			if c != nil {
-				candidates = append(candidates, c)
+// Channel Generator Pattern
+func GenerateCandidates(fsets []FrequentItemset) <-chan Itemset {
+	ch := make(chan Itemset, len(fsets)*len(fsets))
+	go func() {
+		for i := 0; i < len(fsets); i++ {
+			for j := i + 1; j < len(fsets); j++ {
+				cset := CombineItemset(*fsets[i].items, *fsets[j].items)
+				if cset != nil {
+					ch <- cset
+				}
 			}
 		}
-	}
-	return candidates
+		close(ch)
+	}()
+	return ch
 }
 
 // Only combine itemsets that are different at the last index
@@ -65,4 +72,14 @@ func CombineItemset(a Itemset, b Itemset) Itemset {
 		}
 	}
 	return append(a, b[len(b)-1])
+}
+
+// Helper Functions
+func setToChannel(items []Itemset) <-chan Itemset {
+	c := make(chan Itemset, len(items))
+	for _, v := range items {
+		c <- v
+	}
+	close(c)
+	return c
 }
