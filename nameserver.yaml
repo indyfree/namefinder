@@ -12,11 +12,7 @@
      spec:
        containers:
          - name: nameserver
-           image: indyfree/nameserver:latest
+           image: indyfree/nameserver:v3
            imagePullPolicy: Always
            ports:
              - containerPort: 8080
-         - name: namedb
-           image: mongo
-           ports:
-             - containerPort: 27017
