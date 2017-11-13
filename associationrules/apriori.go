@@ -30,7 +30,8 @@ func FrequentItemsets(transactions []Itemset, minsup float64, candidates <-chan 
 	var wg sync.WaitGroup
 	for i := 0; i < 3; i++ {
 		wg.Add(1)
-		go frequentItemWorker(i, &wg, transactions, minsup, candidates, results)
+		// Only Reading from transaction DB, no mutex needed
+		go frequentItemWorker(&wg, transactions, minsup, candidates, results)
 	}
 	wg.Wait()
 	close(results)
@@ -43,7 +44,7 @@ func FrequentItemsets(transactions []Itemset, minsup float64, candidates <-chan 
 	return fsets
 }
 
-func frequentItemWorker(w int, wg *sync.WaitGroup, transactions []Itemset, minsup float64,
+func frequentItemWorker(wg *sync.WaitGroup, transactions []Itemset, minsup float64,
 	itemset <-chan Itemset, fsets chan<- FrequentItemset) {
 	for i := range itemset {
 		sup := getSupport(transactions, i)
