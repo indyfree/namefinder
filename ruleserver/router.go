@@ -23,14 +23,23 @@ func Index(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Welcome to the namefinder service")
 }
 
-// TODO: Return json headers and errorcodes
 func RulesIndex(w http.ResponseWriter, r *http.Request) {
 	rules := GetAllRules(address, db, col)
-	json.NewEncoder(w).Encode(rules)
+	for _, r := range rules {
+		fmt.Fprintln(w, r)
+	}
+}
+
+func RulesShow(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	rules := GetRules(address, db, col, vars["item"])
+	for _, r := range rules {
+		fmt.Fprintln(w, r)
+	}
 }
 
 // TODO: Return json headers and errorcodes
-func RulesShow(w http.ResponseWriter, r *http.Request) {
+func RulesApi(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	rules := GetRules(address, db, col, vars["item"])
 	json.NewEncoder(w).Encode(rules)
@@ -45,5 +54,6 @@ func NewRouter(mgoAddress, dbName, collection string) *mux.Router {
 	router.HandleFunc("/", LogHandler(Index))
 	router.HandleFunc("/rules", LogHandler(RulesIndex))
 	router.HandleFunc("/rules/{item}", LogHandler(RulesShow))
+	router.HandleFunc("/api/{item}", LogHandler(RulesApi))
 	return router
 }
