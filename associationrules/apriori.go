@@ -5,17 +5,17 @@ import (
 	"time"
 )
 
-func Apriori(transactions []Itemset, alphabet []Itemset, minsup float64) []FrequentItemset {
+func Apriori(transactions []Itemset, alphabet Itemset, minsup float64) []FrequentItemset {
 	defer timeTrack(time.Now(), "Apriori")
 
 	//Find frequent 1-Itemsets first
-	candidates := setToChannel(alphabet)
+	candidates := candidates(alphabet)
 	fsets := FrequentItemsets(transactions, minsup, candidates)
 	results := fsets
 
 	// Generate candidates from subsequent itemsets and find frequent ones
 	for len(fsets) > 0 {
-		candidates = GenerateCandidates(fsets)
+		candidates := GenerateCandidates(fsets)
 		fsets = FrequentItemsets(transactions, minsup, candidates)
 		results = append(results, fsets...)
 	}
@@ -99,10 +99,10 @@ func CombineItemset(a Itemset, b Itemset) Itemset {
 }
 
 // Helper Functions
-func setToChannel(items []Itemset) <-chan Itemset {
+func candidates(items []string) <-chan Itemset {
 	c := make(chan Itemset, len(items))
 	for _, v := range items {
-		c <- v
+		c <- Itemset{v}
 	}
 	close(c)
 	return c
