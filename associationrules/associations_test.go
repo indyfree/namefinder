@@ -7,23 +7,23 @@ import (
 func TestFindAlphabet(t *testing.T) {
 	cases := []struct {
 		in   []Itemset
-		want []Itemset
+		want Itemset
 	}{
 		{in: []Itemset{{"A", "B"}, {"A", "D"}, {"B", "C"}, {"B", "D"}, {"A", "C", "D"},
 			{"A", "C", "E"}, {"A", "B", "E"}, {"A", "C", "D", "E"}},
-			want: []Itemset{{"A"}, {"B"}, {"C"}, {"D"}, {"E"}},
+			want: Itemset{"A", "B", "C", "D", "E"},
 		},
 		{in: []Itemset{{"Gracie", "Barley", "Bonny"}, {"Max", "Jackey", "Bonny"}},
-			want: []Itemset{{"Barley"}, {"Bonny"}, {"Gracie"}, {"Jackey"}, {"Max"}},
+			want: Itemset{"Barley", "Bonny", "Gracie", "Jackey", "Max"},
 		},
 		{in: []Itemset{},
-			want: []Itemset{},
+			want: Itemset{},
 		},
 	}
 
 	for _, c := range cases {
-		got := FindAlphabet(c.in)
-		if !hasSameSets(c.want, got) {
+		got := DetermineAlphabet(c.in)
+		if !c.want.Equals(got) {
 			t.Errorf("FindAlphabet() got: %q want: %q", got, c.want)
 		}
 	}

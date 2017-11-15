@@ -7,30 +7,30 @@ import (
 func TestApriori(t *testing.T) {
 	cases := []struct {
 		t      []Itemset
-		items  []Itemset
+		items  Itemset
 		minsup float64
 		want   []Itemset
 	}{
 		{t: []Itemset{{"A", "B"}, {"A", "D"}, {"B", "C"}, {"B", "D"}, {"A", "C", "D"},
 			{"A", "C", "E"}, {"A", "B", "E"}, {"A", "C", "D", "E"}},
-			items:  []Itemset{{"A"}, {"B"}, {"C"}, {"D"}, {"E"}},
+			items:  Itemset{"A", "B", "C", "D", "E"},
 			minsup: 0.25,
 			want: []Itemset{{"A"}, {"B"}, {"C"}, {"D"}, {"E"}, {"A", "B"}, {"A", "C"},
 				{"A", "D"}, {"A", "E"}, {"C", "D"}, {"C", "E"}, {"A", "C", "D"}, {"A", "C", "E"}}},
 		{t: []Itemset{{"A", "B"}, {"B", "C"}, {"A", "D"}, {"B", "D"}},
-			items:  []Itemset{{"A"}, {"B"}, {"C"}, {"D"}},
+			items:  Itemset{"A", "B", "C", "D"},
 			minsup: 0.5,
 			want:   []Itemset{{"A"}, {"B"}, {"D"}}},
 		{t: []Itemset{{"Peter", "Gracie"}, {"Jack", "Barley"}, {"Max", "Tom"}, {"Tom", "Barley"}, {"Jack", "Barley"}},
-			items:  []Itemset{{"Peter"}, {"Gracie"}, {"Jack"}, {"Barley"}, {"Tom"}},
+			items:  Itemset{"Peter", "Gracie", "Jack", "Barley", "Tom"},
 			minsup: 0.4,
 			want:   []Itemset{{"Barley"}, {"Jack"}, {"Tom"}, {"Barley Jack"}}},
 		{t: []Itemset{},
-			items:  []Itemset{{"Peter"}, {"Gracie"}, {"Jack"}, {"Barley"}, {"Tom"}},
+			items:  Itemset{"Peter", "Gracie", "Jack", "Barley", "Tom"},
 			minsup: 0.0,
 			want:   []Itemset{}},
 		{t: []Itemset{{"Peter"}, {"Gracie"}},
-			items:  []Itemset{{"Peter"}, {"Gracie"}, {"Jack"}, {"Barley"}, {"Tom"}},
+			items:  Itemset{"Peter", "Gracie", "Jack", "Barley", "Tom"},
 			minsup: 1.0,
 			want:   []Itemset{}},
 	}
