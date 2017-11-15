@@ -7,7 +7,6 @@ import (
 	ar "github.com/indyfree/namefinder/associationrules"
 )
 
-// TODO use pointers?
 func GenerateTransactions(n int, items []string) []ar.Itemset {
 	r := rand.New(rand.NewSource(time.Now().Unix()))
 	transactions := make([]ar.Itemset, n)

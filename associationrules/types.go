@@ -11,7 +11,7 @@ type AssociationRule struct {
 	B          Itemset `json:"b"`
 	Support    float64 `json:"support"`
 	Confidence float64 `json:"confidence"`
-	Lift       float64 `json:"lift"`
+	Lift       float64 `json:"lift"` // TODO: remove or calculate
 }
 
 func (a AssociationRule) String() string {
