@@ -47,7 +47,7 @@ func FrequentItemsets(transactions []Itemset, minsup float64, candidates <-chan 
 func frequentItemWorker(wg *sync.WaitGroup, transactions []Itemset, minsup float64,
 	itemset <-chan Itemset, fsets chan<- FrequentItemset) {
 	for i := range itemset {
-		sup := getSupport(transactions, i)
+		sup := calculateSupport(transactions, i)
 		if sup >= minsup {
 			item := i // why copy?
 			fsets <- FrequentItemset{&item, sup}
@@ -56,7 +56,7 @@ func frequentItemWorker(wg *sync.WaitGroup, transactions []Itemset, minsup float
 	wg.Done()
 }
 
-func getSupport(transactions []Itemset, set Itemset) float64 {
+func calculateSupport(transactions []Itemset, set Itemset) float64 {
 	count := 0
 	for _, t := range transactions {
 		if t.ContainsSet(set) {
