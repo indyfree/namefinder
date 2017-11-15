@@ -22,38 +22,38 @@ func TestFindAlphabet(t *testing.T) {
 	}
 
 	for _, c := range cases {
-		got := DetermineAlphabet(c.in)
+		got := determineAlphabet(c.in)
 		if !c.want.Equals(got) {
 			t.Errorf("FindAlphabet() got: %q want: %q", got, c.want)
 		}
 	}
 }
 
-func TestConstructRules(t *testing.T) {
-	cases := []struct {
-		in   Itemset
-		want []AssociationRule
-	}{
-		{in: Itemset{"A", "B", "E"},
-			want: []AssociationRule{AssociationRule{A: Itemset{"A"}, B: Itemset{"B", "E"}},
-				AssociationRule{A: Itemset{"B"}, B: Itemset{"A", "E"}}, AssociationRule{A: Itemset{"E"}, B: Itemset{"A", "B"}}},
-		},
-		{in: Itemset{"A", "B"},
-			want: []AssociationRule{AssociationRule{A: Itemset{"A"}, B: Itemset{"B"}},
-				AssociationRule{A: Itemset{"B"}, B: Itemset{"A"}}},
-		},
-		{in: Itemset{"A"},
-			want: []AssociationRule{},
-		},
-	}
+// func TestCandidateRules(t *testing.T) {
+// 	cases := []struct {
+// 		in   Itemset
+// 		want []AssociationRule
+// 	}{
+// 		{in: Itemset{"A", "B", "E"},
+// 			want: []AssociationRule{AssociationRule{A: Itemset{"A"}, B: Itemset{"B", "E"}},
+// 				AssociationRule{A: Itemset{"B"}, B: Itemset{"A", "E"}}, AssociationRule{A: Itemset{"E"}, B: Itemset{"A", "B"}}},
+// 		},
+// 		{in: Itemset{"A", "B"},
+// 			want: []AssociationRule{AssociationRule{A: Itemset{"A"}, B: Itemset{"B"}},
+// 				AssociationRule{A: Itemset{"B"}, B: Itemset{"A"}}},
+// 		},
+// 		{in: Itemset{"A"},
+// 			want: []AssociationRule{},
+// 		},
+// 	}
 
-	for _, c := range cases {
-		got := ConstructRules(c.in)
-		if !equalRules(got, c.want) {
-			t.Errorf("ConstructRules(%q) == \n%q want: \n%q", c.in, got, c.want)
-		}
-	}
-}
+// 	for _, c := range cases {
+// 		got := candidateRules(c.in)
+// 		if !equalRules(got, c.want) {
+// 			t.Errorf("ConstructRules(%q) == \n%q want: \n%q", c.in, got, c.want)
+// 		}
+// 	}
+// }
 
 func TestGetRules(t *testing.T) {
 	cases := []struct {

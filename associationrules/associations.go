@@ -9,52 +9,53 @@ import (
 
 // Mine associationrules from transactions
 func Mine(t []Itemset, minsup float64, minconf float64) []AssociationRule {
-	defer timeTrack(time.Now(), "GetRules")
+	// 1. Find frequent itemsets
 	alphabet := determineAlphabet(t)
 	fsets := Apriori(t, alphabet, minsup)
 
-	// Lookup map for support values
-	smap := make(map[string]float64)
+	// 2. Determine strong rules from frequent itemsets
+	srules := mineStrongRules(fsets, minconf)
+	return srules
+}
 
-	// Find strong rules
-	defer timeTrack(time.Now(), "FindStrongRules")
+// Generate rules which have enough confidence (strong rules)
+func mineStrongRules(fsets []FrequentItemset, minconf float64) []AssociationRule {
+	defer timeTrack(time.Now(), "mineStrongRules")
+	smap := make(map[string]float64) // Map for fast support lookup
 	srules := make([]AssociationRule, 0)
+
 	for _, f := range fsets {
 		smap[fmt.Sprintf("%s", f.items)] = f.support
-		rules := ConstructRules(f.items)
-		for _, r := range rules {
-			conf := f.support / smap[fmt.Sprintf("%s", r.A)]
-			if conf >= minconf {
-				r.Confidence = conf
-				r.Support = f.support
-				srules = append(srules, r)
-			}
+		if len(f.items) > 1 {
+			srules = append(srules, strongRulesOfSet(f, smap, minconf)...)
 		}
 	}
 	return srules
 }
 
-// Construct 1-Rule
-func ConstructRules(set Itemset) []AssociationRule {
-	if len(set) <= 1 { // No rules with only 1 element
-		return nil
-	}
-
-	rules := make([]AssociationRule, len(set))
-	for i, _ := range set {
-		rule := AssociationRule{A: Itemset{set[i]}}
-		b := make([]string, len(set)-1)
-		k := 0
-		for j := 0; j < len(set); j++ {
-			if j != i {
-				b[k] = set[j]
-				k++
-			}
+func strongRulesOfSet(fset FrequentItemset, smap map[string]float64, minconf float64) []AssociationRule {
+	srules := make([]AssociationRule, 0)
+	for i, item := range fset.items {
+		conf := fset.support / smap[fmt.Sprintf("%s", item)]
+		if conf > minconf {
+			srules = append(srules, generateRule(i, fset.items, fset.support, conf))
 		}
-		rule.B = b
-		rules[i] = rule
 	}
-	return rules
+	return srules
+}
+
+func generateRule(index int, set Itemset, support, conf float64) AssociationRule {
+	rule := AssociationRule{A: Itemset{set[index]}}
+	b := make(Itemset, 0)
+	for j := 0; j < len(set); j++ {
+		if j != index {
+			b = append(b, set[j])
+		}
+	}
+	rule.B = b
+	rule.Support = support
+	rule.Confidence = conf
+	return rule
 }
 
 // TODO: break up nested for loop
