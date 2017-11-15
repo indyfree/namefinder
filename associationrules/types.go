@@ -48,10 +48,10 @@ func (s Itemset) Contains(item string) bool {
 //
 // Wrapper type to capsule support
 type FrequentItemset struct {
-	items   *Itemset
+	items   Itemset
 	support float64
 }
 
 func (f FrequentItemset) String() string {
-	return fmt.Sprintf("%s:%f", *f.items, f.support)
+	return fmt.Sprintf("%s:%f", f.items, f.support)
 }

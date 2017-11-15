@@ -19,8 +19,8 @@ func GetRules(t []Itemset, minsup float64, minconf float64) []AssociationRule {
 	defer timeTrack(time.Now(), "FindStrongRules")
 	srules := make([]AssociationRule, 0)
 	for _, f := range fsets {
-		smap[fmt.Sprintf("%s", *f.items)] = f.support
-		rules := ConstructRules(*f.items)
+		smap[fmt.Sprintf("%s", f.items)] = f.support
+		rules := ConstructRules(f.items)
 		for _, r := range rules {
 			conf := f.support / smap[fmt.Sprintf("%s", r.A)]
 			if conf >= minconf {

@@ -28,7 +28,7 @@ func FrequentItemsets(transactions []Itemset, minsup float64, candidates <-chan 
 
 	// Worker Pool to concurrently scan transactions
 	var wg sync.WaitGroup
-	for i := 0; i < 3; i++ {
+	for i := 0; i < 5; i++ {
 		wg.Add(1)
 		// Only Reading from transaction DB, no mutex needed
 		go frequentItemWorker(&wg, transactions, minsup, candidates, results)
@@ -44,13 +44,13 @@ func FrequentItemsets(transactions []Itemset, minsup float64, candidates <-chan 
 	return fsets
 }
 
+// Go Worker to determine which of the candidates are frequent
 func frequentItemWorker(wg *sync.WaitGroup, transactions []Itemset, minsup float64,
-	itemset <-chan Itemset, fsets chan<- FrequentItemset) {
-	for i := range itemset {
-		sup := calculateSupport(transactions, i)
+	candidates <-chan Itemset, fsets chan<- FrequentItemset) {
+	for c := range candidates {
+		sup := calculateSupport(transactions, c)
 		if sup >= minsup {
-			item := i // why copy?
-			fsets <- FrequentItemset{&item, sup}
+			fsets <- FrequentItemset{c, sup}
 		}
 	}
 	wg.Done()
@@ -72,7 +72,7 @@ func GenerateCandidates(fsets []FrequentItemset) <-chan Itemset {
 	go func() {
 		for i := 0; i < len(fsets); i++ {
 			for j := i + 1; j < len(fsets); j++ {
-				cset := CombineItemset(*fsets[i].items, *fsets[j].items)
+				cset := CombineItemset(fsets[i].items, fsets[j].items)
 				if cset != nil {
 					ch <- cset
 				}

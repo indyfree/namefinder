@@ -48,7 +48,7 @@ func TestApriori(t *testing.T) {
 func GetItemset(fsets []FrequentItemset) []Itemset {
 	items := make([]Itemset, len(fsets))
 	for i, v := range fsets {
-		items[i] = *v.items
+		items[i] = v.items
 	}
 	return items
 }
