@@ -75,7 +75,7 @@ func TestGetRules(t *testing.T) {
 	}
 
 	for _, c := range cases {
-		got := GetRules(c.t, c.minsup, c.minconf)
+		got := Mine(c.t, c.minsup, c.minconf)
 		if !equalRules(got, c.want) {
 			t.Errorf("GetRules(): \n got: %q\n, want: %q", got, c.want)
 		}

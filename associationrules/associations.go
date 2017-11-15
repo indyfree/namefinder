@@ -7,9 +7,10 @@ import (
 	"time"
 )
 
-func GetRules(t []Itemset, minsup float64, minconf float64) []AssociationRule {
+// Mine associationrules from transactions
+func Mine(t []Itemset, minsup float64, minconf float64) []AssociationRule {
 	defer timeTrack(time.Now(), "GetRules")
-	alphabet := DetermineAlphabet(t)
+	alphabet := determineAlphabet(t)
 	fsets := Apriori(t, alphabet, minsup)
 
 	// Lookup map for support values
@@ -58,8 +59,8 @@ func ConstructRules(set Itemset) []AssociationRule {
 
 // TODO: break up nested for loop
 // Find items which the transactions consist of, return sorted itemset
-func DetermineAlphabet(transactions []Itemset) Itemset {
-	defer timeTrack(time.Now(), "DetermineAlphabet")
+func determineAlphabet(transactions []Itemset) Itemset {
+	defer timeTrack(time.Now(), "determineAlphabet")
 	alphabet := make(Itemset, 0)
 	for _, t := range transactions {
 		for _, titem := range t {
