@@ -5,6 +5,8 @@ import (
 	"time"
 )
 
+// Apriori runs the Apriori Algorithm from Agrawal and Sikrant (1994) on a transaction database.
+// Go concurrency features are used to improve efficiency the proposed Algorithm.
 func Apriori(transactions []Itemset, alphabet Itemset, minsup float64) []FrequentItemset {
 	defer timeTrack(time.Now(), "Apriori")
 
@@ -22,6 +24,7 @@ func Apriori(transactions []Itemset, alphabet Itemset, minsup float64) []Frequen
 	return results
 }
 
+// FrequentItemsets return the candidates that exceed the support threshhold.
 func FrequentItemsets(transactions []Itemset, minsup float64, candidates <-chan Itemset) []FrequentItemset {
 	results := make(chan FrequentItemset, cap(candidates))
 
@@ -65,13 +68,15 @@ func calculateSupport(transactions []Itemset, set Itemset) float64 {
 	return float64(count) / float64(len(transactions))
 }
 
-// Channel Generator Pattern
+// GenerateCandidates constructs the possible candidates given the
+// frequent itemsets of the previous step. It uses the channel generator
+// pattern to facilitate concurrent Candidate Genration and Support Lookup.
 func GenerateCandidates(fsets []FrequentItemset) <-chan Itemset {
 	ch := make(chan Itemset, len(fsets)*len(fsets))
 	go func() {
 		for i := 0; i < len(fsets); i++ {
 			for j := i + 1; j < len(fsets); j++ {
-				cset := CombineItemset(fsets[i].items, fsets[j].items)
+				cset := combineItemset(fsets[i].items, fsets[j].items)
 				if cset != nil {
 					ch <- cset
 				}
@@ -82,9 +87,9 @@ func GenerateCandidates(fsets []FrequentItemset) <-chan Itemset {
 	return ch
 }
 
-// Only combine itemsets that are different at the last index
-// Apriori premise
-func CombineItemset(a Itemset, b Itemset) Itemset {
+// According to the Apriori premise, candidate itemsets can only
+// be a combination of frequequent itemsets that differ at the last index.
+func combineItemset(a Itemset, b Itemset) Itemset {
 	if len(a) != len(b) || a[len(a)-1] == b[len(b)-1] {
 		return nil
 	}

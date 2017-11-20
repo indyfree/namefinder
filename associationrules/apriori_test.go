@@ -93,7 +93,7 @@ func TestCombineItemset(t *testing.T) {
 		{[]Itemset{{"A", "B", "C"}, {"A", "C", "D"}}, nil},
 	}
 	for _, c := range testcases {
-		got := CombineItemset(c.in[0], c.in[1])
+		got := combineItemset(c.in[0], c.in[1])
 		if !c.want.Equals(got) {
 			t.Errorf("CombineItemset(%q, %q) == %q, want %q", c.in[0], c.in[1], got, c.want)
 		}
