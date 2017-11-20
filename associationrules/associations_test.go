@@ -85,7 +85,7 @@ func TestGetRules(t *testing.T) {
 func (a AssociationRule) Equals(b AssociationRule) bool {
 	if !a.A.Equals(b.A) || !a.B.Equals(b.B) {
 		return false
-	} else if a.Support != b.Support || a.Confidence != a.Confidence || a.Lift != b.Lift {
+	} else if a.Support != b.Support || a.Confidence != a.Confidence {
 		return false
 	}
 	return true

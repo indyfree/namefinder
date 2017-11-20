@@ -1,6 +1,7 @@
 package associationrules
 
 import (
+	"log"
 	"sync"
 	"time"
 )
@@ -15,7 +16,7 @@ func Apriori(transactions []Itemset, alphabet Itemset, minsup float64) []Frequen
 	fsets := FrequentItemsets(transactions, minsup, candidates)
 	results := fsets
 
-	// Generate candidates from subsequent itemsets and find frequent ones
+	// Perform the two Apriori steps until no more frequent itemsets are discovered
 	for len(fsets) > 0 {
 		candidates := GenerateCandidates(fsets)
 		fsets = FrequentItemsets(transactions, minsup, candidates)
@@ -24,7 +25,7 @@ func Apriori(transactions []Itemset, alphabet Itemset, minsup float64) []Frequen
 	return results
 }
 
-// FrequentItemsets return the candidates that exceed the support threshhold.
+// FrequentItemsets return the candidates that exceed the support threshold.
 func FrequentItemsets(transactions []Itemset, minsup float64, candidates <-chan Itemset) []FrequentItemset {
 	results := make(chan FrequentItemset, cap(candidates))
 
@@ -32,7 +33,7 @@ func FrequentItemsets(transactions []Itemset, minsup float64, candidates <-chan 
 	var wg sync.WaitGroup
 	for i := 0; i < 5; i++ {
 		wg.Add(1)
-		// Only Reading from transaction DB, no mutex needed
+		// Worker only reads from transaction db, thus no mutex needed
 		go frequentItemWorker(&wg, transactions, minsup, candidates, results)
 	}
 	wg.Wait()
@@ -46,7 +47,7 @@ func FrequentItemsets(transactions []Itemset, minsup float64, candidates <-chan 
 	return fsets
 }
 
-// Go Worker to determine which of the candidates are frequent
+// frequentItemWorker is a Go worker that determines the candidates that are frequent
 func frequentItemWorker(wg *sync.WaitGroup, transactions []Itemset, minsup float64,
 	candidates <-chan Itemset, fsets chan<- FrequentItemset) {
 	for c := range candidates {
