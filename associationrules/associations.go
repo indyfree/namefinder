@@ -37,7 +37,7 @@ func strongSetRules(fset FrequentItemset, smap map[string]float64, minconf float
 	srules := make([]AssociationRule, 0)
 	for i, item := range fset.items {
 		conf := fset.support / smap[fmt.Sprintf("%s", item)]
-		if conf > minconf {
+		if conf >= minconf {
 			srules = append(srules, constructRule(i, fset.items, fset.support, conf))
 		}
 	}
