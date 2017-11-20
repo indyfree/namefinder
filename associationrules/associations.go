@@ -2,12 +2,11 @@ package associationrules
 
 import (
 	"fmt"
-	"log"
 	"sort"
-	"time"
 )
 
-// Mine associationrules from transactions
+// Mine performs assocation rule mining using the Apriori algorithm.
+// This function is the main entry point to retrieve rules from a transaction databse.
 func Mine(t []Itemset, minsup float64, minconf float64) []AssociationRule {
 	// 1. Find frequent itemsets
 	alphabet := determineAlphabet(t)
@@ -72,10 +71,4 @@ func determineAlphabet(transactions []Itemset) Itemset {
 	}
 	sort.Strings(alphabet)
 	return alphabet
-}
-
-// Profiling Purposes
-func timeTrack(start time.Time, name string) {
-	elapsed := time.Since(start)
-	log.Printf("%s took %s", name, elapsed)
 }
