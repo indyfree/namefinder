@@ -100,7 +100,13 @@ func combineItemset(a Itemset, b Itemset) Itemset {
 			return nil
 		}
 	}
-	return append(a, b[len(b)-1])
+
+	citems := make([]string, len(b)+1)
+	for j := range a {
+		citems[j] = a[j]
+	}
+	citems[len(b)] = b[len(b)-1]
+	return citems
 }
 
 // Helper Functions
