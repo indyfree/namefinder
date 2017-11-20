@@ -23,8 +23,7 @@ func Apriori(transactions []Itemset, alphabet Itemset, minsup float64) []Frequen
 }
 
 func FrequentItemsets(transactions []Itemset, minsup float64, candidates <-chan Itemset) []FrequentItemset {
-	// TODO Calculate max number of FrequentItemsets (Number of Candidates)
-	results := make(chan FrequentItemset, len(transactions))
+	results := make(chan FrequentItemset, cap(candidates))
 
 	// Worker Pool to concurrently scan transactions
 	var wg sync.WaitGroup
@@ -100,7 +99,7 @@ func CombineItemset(a Itemset, b Itemset) Itemset {
 
 // Helper Functions
 func candidates(items []string) <-chan Itemset {
-	c := make(chan Itemset, len(items))
+	c := make(chan Itemset, len(items)*len(items))
 	for _, v := range items {
 		c <- Itemset{v}
 	}
